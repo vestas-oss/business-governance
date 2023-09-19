@@ -1,0 +1,136 @@
+import * as React from "react";
+import { useProperties } from "@/hooks/useProperties";
+import { useSetProperties } from "@/hooks/useSetProperties";
+import { Pivot, PivotItem, Separator, TextField, Toggle } from "@fluentui/react";
+import { useEffect, useState } from "react";
+
+export function EditMode() {
+    const properties = useProperties();
+    const setProperties = useSetProperties();
+    const [list, setList] = useState(properties?.entityListTitle);
+    const [startNode, setStartNode] = useState(properties?.startNode);
+    const [filter, setFilter] = useState(properties?.filter);
+    const [select, setSelect] = useState(properties?.select);
+    const [group, setGroup] = useState(properties?.group);
+    const [legend, setLegend] = useState(properties?.legend);
+    const [search, setSearch] = useState(properties?.search);
+    const [parentColumnName, setParentColumnName] = useState(properties?.parentColName);
+
+    useEffect(() => {
+        setProperties?.({ entityListTitle: list });
+    }, [list, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ startNode });
+    }, [startNode, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ filter });
+    }, [filter, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ select });
+    }, [select, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ group });
+    }, [group, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ legend });
+    }, [legend, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ search });
+    }, [search, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ parentColName: parentColumnName });
+    }, [parentColumnName, setProperties]);
+
+    return (
+        <>
+            <div className="w-full">
+                <Pivot aria-label="Links of Tab Style Pivot Example" linkFormat="tabs">
+                    <PivotItem headerText="Configuration">
+                        <div className="w-80">
+                            <TextField
+                                label="List"
+                                value={list}
+                                onChange={(e, value) => {
+                                    setList(value);
+                                }}
+                            />
+                            <TextField
+                                label="Start Node"
+                                value={startNode}
+                                onChange={(e, value) => {
+                                    setStartNode(value);
+                                }}
+                            />
+                            <TextField
+                                label="Parent Column"
+                                value={parentColumnName}
+                                onChange={(e, value) => {
+                                    setParentColumnName(value);
+                                }}
+                            />
+                        </div>
+                    </PivotItem>
+                    <PivotItem headerText="Display">
+                        <div className="w-80">
+                            <Toggle
+                                label="Group nodes"
+                                defaultChecked={group}
+                                onText="On"
+                                offText="Off"
+                                onChange={(e, value) => {
+                                    setGroup(value);
+                                }}
+                            />
+                            <Toggle
+                                label="Legend"
+                                defaultChecked={legend}
+                                onText="On"
+                                offText="Off"
+                                onChange={(e, value) => {
+                                    setLegend(value);
+                                }}
+                            />
+                            <Toggle
+                                label="Search"
+                                defaultChecked={search}
+                                onText="On"
+                                offText="Off"
+                                onChange={(e, value) => {
+                                    setSearch(value);
+                                }}
+                            />
+                        </div>
+                    </PivotItem>
+                    <PivotItem headerText="Advanced">
+                        <div className="w-80">
+                            <TextField
+                                label="Filter"
+                                value={filter}
+                                onChange={(e, value) => {
+                                    setFilter(value);
+                                }}
+                                description="OData filter (example: Title eq 'Example')"
+                            />
+                            <TextField
+                                label="Select"
+                                value={select}
+                                onChange={(e, value) => {
+                                    setSelect(value);
+                                }}
+                                description="OData select (comma separated)"
+                            />
+                        </div>
+                    </PivotItem>
+                </Pivot>
+            </div>
+            <Separator className="w-full" />
+        </>
+    );
+}

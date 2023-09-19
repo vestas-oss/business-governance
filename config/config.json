@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "business-governance-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/business-governance/BusinessGovernanceWebPart.js",
+          "manifest": "./src/webparts/business-governance/BusinessGovernanceWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+  }
+}
