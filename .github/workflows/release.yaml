@@ -15,7 +15,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies and package 🔧
         run: npm ci && npm run package
-      - name: Upload artifact 📦
-        uses: actions/upload-artifact@v3
+      - name: Upload to release 📦
+        uses: JasonEtco/upload-to-release@master
         with:
-          path: ${{ github.workspace }}/**/*.sppkg
+          args: sharepoint/solution/Vestas.BusinessGovernance.Core.sppkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
