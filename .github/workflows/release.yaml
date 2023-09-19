@@ -13,8 +13,8 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
-      - name: Install dependencies and build 🔧
-        run: npm ci && npm run build
+      - name: Install dependencies and package 🔧
+        run: npm ci && npm run package
       - name: Upload artifact 📦
         uses: actions/upload-artifact@v3
         with:
