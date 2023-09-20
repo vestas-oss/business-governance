@@ -22,7 +22,10 @@ export const ImportService = {
     import: async (sp: SPFI, listModel: ListModel) => {
         const result = await sp.web.lists.ensure(listModel.title);
         const list = result.list;
-        await list.update({ EnableAttachments: false });
+        await list.update({
+            EnableAttachments: false,
+            EnableVersioning: true,
+        });
 
         // Fields
         if (listModel.fields) {

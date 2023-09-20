@@ -29,6 +29,10 @@ export function BusinessGovernance(props: Props) {
                     <Route path="/" element={<ReadMode details={props.details} />} />
                     <Route path="/focus/:focus" element={<ReadMode details={props.details} />} />
                     <Route
+                        path="/selected/:selected"
+                        element={<ReadMode details={props.details} />}
+                    />
+                    <Route
                         path="/focus/:focus/selected/:selected"
                         element={<ReadMode details={props.details} />}
                     />

@@ -4,4 +4,5 @@ export type RoleItem = {
     Title: string
     KeyId: string
     Order0: number,
+    Description?: string,
 }

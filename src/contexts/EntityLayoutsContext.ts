@@ -22,7 +22,7 @@ export type EntityDetailsRow = {
     value: string;
 }
 
-export type EntityDetailsRowType = "EntityKey" | "MembersProvider" | "MeetingInfo" | "Files" | "DetailsProvider";
+export type EntityDetailsRowType = "MembersProvider" | "MeetingInfo" | "Files" | "DetailsProvider";
 
 export type EntityLayout = {
     icon: string;

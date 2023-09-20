@@ -15,6 +15,7 @@ export const EntityService = {
         const title = configuration.entityListTitle;
         return sp.web.lists.getByTitle(title);
     },
+
     getEntities: async (sp: SPFI, configuration?: Configuration) => {
         let selects = ["Id", "Title", "ContentTypeId"];
         if (configuration?.parentColumn) {
@@ -89,6 +90,9 @@ export const EntityService = {
         return entity;
     },
 
+    /**
+     * Get extra columns from the entity
+     */
     getEntityDetails: async (sp: SPFI, configuration: Configuration, entityId: number, selects?: Array<string>, expands?: Array<string>): Promise<any | undefined> => {
         const entityList = EntityService.getEntityList(sp, configuration);
         let item = entityList.items.getById(entityId);

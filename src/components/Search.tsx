@@ -56,6 +56,7 @@ export function Search(props: Props) {
                 onResults?.(undefined);
                 return;
             }
+
             const results = await search(await db, {
                 term: query,
                 properties: ["title"],
