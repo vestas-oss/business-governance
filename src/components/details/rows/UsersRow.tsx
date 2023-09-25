@@ -16,17 +16,17 @@ export const UsersRow = (props: Props) => {
 
     const roleId = row.value;
 
-    let members = entity.memberRoles?.filter((memberRole) => memberRole.roleId === roleId);
-    if (!members || members.length === 0) {
-        return <></>;
+    let users = entity.memberRoles?.filter((user) => user.roleId === roleId && !user.isDeleted);
+    if (!users || users.length === 0) {
+        return null;
     }
-    members = members.sort((a, b) => a.title.localeCompare(b.title));
+    users = users.sort((a, b) => a.title.localeCompare(b.title));
     let more: JSX.Element = <></>;
-    if (members.length > 25) {
-        members = members.slice(0, 25);
+    if (users.length > 25) {
+        users = users.slice(0, 25);
         more = <div>more...</div>;
     }
-    const elements = members.map((mr, index) => {
+    const elements = users.map((mr, index) => {
         const username = mr.userName.split("|")[2].split("@")[0].toUpperCase();
         return (
             <div key={`member-${index}`} className="w-full">

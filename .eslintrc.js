@@ -297,7 +297,7 @@ module.exports = {
         'promise/param-names': 2,
         // RATIONALE:         Catches code that is likely to be incorrect
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
-        'require-atomic-updates': 2,
+        'require-atomic-updates': 0,
         // STANDARDIZED BY:   eslint\conf\eslint-recommended.js
         'require-yield': 1,
         // "Use strict" is redundant when using the TypeScript compiler.

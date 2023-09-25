@@ -187,7 +187,13 @@ export function Details(props: Props) {
                                 const rows = section.rows.map((row, index) => {
                                     switch (row.type) {
                                         case "MembersProvider":
-                                            return <UsersRow entity={entity} row={row} />;
+                                            return (
+                                                <UsersRow
+                                                    key={`${row.title}-${index}`}
+                                                    entity={entity}
+                                                    row={row}
+                                                />
+                                            );
                                         case "MeetingInfo":
                                             return (
                                                 <EventRow

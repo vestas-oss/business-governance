@@ -2,6 +2,7 @@ import * as React from "react";
 import { useConfiguration } from "@/hooks/useConfiguration";
 import { useDetailsView } from "@/hooks/useDetailsView";
 import { useSP } from "@/hooks/useSP";
+import { Services } from "@/services/Services";
 import { RoleItem } from "@/types/items/RoleItem";
 import { DefaultButton, IPersonaProps, PrimaryButton } from "@fluentui/react";
 import "@pnp/sp/site-users/web";
@@ -27,11 +28,11 @@ export function EditRole() {
             return [];
         }
         const roleKeyId = role?.KeyId;
-        const members = entity.memberRoles?.filter(
-            (memberRole) => memberRole.roleId === roleKeyId.toString()
+        const users = entity.memberRoles?.filter(
+            (user) => user.roleId === roleKeyId.toString() && !user.isDeleted
         );
 
-        return members.map((m) => m.name);
+        return users.map((m) => m.name);
     }, [entity, role?.KeyId]);
 
     const onSave = useCallback(async () => {
@@ -51,39 +52,15 @@ export function EditRole() {
         const removes = defaultSelectedUsers.filter((u) => !usersSet.has(u));
         const adds = users.filter((u) => !currentUsersSet.has(u));
 
-        // Removes
-        // console.log("Removes:");
-        // console.dir(removes);
-        for (let i = 0; i !== removes.length; i++) {
-            const member = entity.memberRoles?.find(
-                (memberRole) =>
-                    memberRole.roleId === role.KeyId.toString() && memberRole.name === removes[i]
-            );
-            if (!member) {
-                continue;
-            }
-            await sp.web.lists
-                .getByTitle(configuration.entityMemberList)
-                .items.getById(member.id)
-                .delete();
-        }
+        await Services.entityUserService.removeUsers(sp, configuration, entity, role, removes);
+        await Services.entityUserService.addUsers(sp, configuration, entity, role, adds);
 
-        // Add
-        // console.log("Add:");
-        // console.dir(adds);
-        for (let i = 0; i !== adds.length; i++) {
-            const user = await sp.web.ensureUser(adds[i]);
-            const itemProperties = {
-                MemberId: user.data.Id,
-                RoleId: role.Id,
-                EntityNameId: entity.id,
-            };
+        // Reload users
+        entity.memberRoles =
+            (await Services.entityUserService.getUsers(sp, configuration, entity.id)) || [];
 
-            await sp.web.lists.getByTitle(configuration.entityMemberList).items.add(itemProperties);
-        }
-
-        location.reload();
-    }, [configuration, defaultSelectedUsers, entity, role, selectedUsers, setView, sp.web]);
+        setView({ view: "details" });
+    }, [configuration, defaultSelectedUsers, entity, role, selectedUsers, setView, sp]);
 
     if (!entity) {
         return null;

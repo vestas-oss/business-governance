@@ -1,10 +1,10 @@
 import { Configuration } from "@/types/Configuration";
 import { Entity } from "@/types/Entity";
-import { EntityMember } from "@/types/EntityMember";
 import { SPFI } from "@pnp/sp";
 import "@pnp/sp/fields";
 import { IFieldInfo } from "@pnp/sp/fields/types";
 import "@pnp/sp/items/get-all";
+import { Services } from "./Services";
 
 export const EntityService = {
     getEntityList: (sp: SPFI, configuration?: Configuration) => {
@@ -50,41 +50,17 @@ export const EntityService = {
             return item;
         };
 
-        // Members
-        const getMembers = async () => {
-            try {
-                if (configuration.entityMemberList) {
-                    const selects = ["Member/Title", "Member/Name", "Role/Order0", "Role/KeyId", "Role/Title", "Role/Id", "Role/Category", "ID", "EntityName/Title", "EntityName/Id", "Member/Name", "Member/JobTitle", "Modified", "EditorId"];
-                    const expands = ["Member", "Role", "EntityName"];
-                    const order = "Member/Title";
-
-                    const memberItems = await sp.web.lists.getByTitle(configuration.entityMemberList).items.
-                        expand(...expands).
-                        select(...selects).
-                        orderBy(order).filter(`EntityName/Id eq ${id}`).getAll();
-                    const members = memberItems.map(m => new EntityMember(m));
-
-                    return members.filter(member => member.entityId.toString() === id.toString());
-                    // entity.members = members.filter(member =>
-                    //     member.entityId.toString() === id.toString() &&
-                    //     member.roleCategory === "Active")?.length;
-                }
-            } catch (e) {
-                console.log(`business governance: failed to get ${configuration.entityMemberList} for entity ${id} (${e?.toString()})`);
-            }
-        };
-
-        const [item, members, contentTypeItem] = await Promise.all([
+        const [item, users, contentTypeItem] = await Promise.all([
             getItem(),
-            getMembers(),
+            Services.entityUserService.getUsers(sp, configuration, id),
             getContentTypeItem(),
         ]);
 
         item.ContentType = contentTypeItem.ContentType?.Name;
 
         const entity = new Entity(item);
-        if (members) {
-            entity.memberRoles = members;
+        if (users) {
+            entity.memberRoles = users;
         }
 
         return entity;
