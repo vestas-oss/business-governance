@@ -112,16 +112,20 @@ export function ConfigurationProvider(props: Props) {
 
                 if (configuration.entityListTitle) {
                     // Guess parent column
-                    const list = sp.web.lists.getByTitle(configuration.entityListTitle);
-                    const listInfo = await list();
-                    const lookupFields = await list.fields.filter(
-                        `TypeAsString eq 'Lookup' and (LookupList eq '${listInfo.Id}' or LookupList eq '{${listInfo.Id}}')`
-                    )();
+                    try {
+                        const list = sp.web.lists.getByTitle(configuration.entityListTitle);
+                        const listInfo = await list();
+                        const lookupFields = await list.fields.filter(
+                            `TypeAsString eq 'Lookup' and (LookupList eq '${listInfo.Id}' or LookupList eq '{${listInfo.Id}}')`
+                        )();
 
-                    if (lookupFields?.length > 0) {
-                        const name = lookupFields[0].InternalName;
-                        console.log(`business-governance: Guessed parent column  to '${name}'`);
-                        return name;
+                        if (lookupFields?.length > 0) {
+                            const name = lookupFields[0].InternalName;
+                            console.log(`business-governance: Guessed parent column  to '${name}'`);
+                            return name;
+                        }
+                    } catch {
+                        // Ignore
                     }
                 }
 
