@@ -1,6 +1,6 @@
 # Business Governance
 
-Repository for creating a hierarchical representation of entities, e.g. legal entities, meeting forums, projects, or similar.  
+Repository for creating a hierarchical representation of entities, e.g. legal entities, meeting forums, projects, or similar.
 
 ## Installation
 
@@ -11,3 +11,16 @@ Repository for creating a hierarchical representation of entities, e.g. legal en
 3. Add the Web Part to a page.
 
 ![Web Part Toolbox](images/toolbox.png)
+
+## Development
+
+-   Install [Node.js](https://nodejs.org/) `v18`
+-   Fork & clone the repository
+-   `npm install`
+-   `npm run dev`
+-   Make changes
+
+Guidelines:
+
+-   Use [Tailwind](https://tailwindcss.com/) instead of Sass
+-   Use React function components

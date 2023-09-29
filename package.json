@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "engines": {
-        "node": ">=16.13.0 <17.0.0 || >=18.17.1 <19.0.0"
+        "node": ">=18.17.1 <19.0.0"
     },
     "main": "lib/index.js",
     "scripts": {
@@ -34,12 +34,12 @@
         "@babel/core": "^7.22.10",
         "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
         "@babel/preset-env": "^7.22.10",
-        "@microsoft/rush-stack-compiler-4.7": "0.1.0",
-        "@rushstack/eslint-config": "2.5.1",
-        "@microsoft/eslint-plugin-spfx": "1.18.0",
         "@microsoft/eslint-config-spfx": "1.18.0",
+        "@microsoft/eslint-plugin-spfx": "1.18.0",
+        "@microsoft/rush-stack-compiler-4.7": "0.1.0",
         "@microsoft/sp-build-web": "1.18.0",
         "@microsoft/sp-module-interfaces": "1.18.0",
+        "@rushstack/eslint-config": "2.5.1",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "@types/webpack-env": "1.13.1",
@@ -52,7 +52,6 @@
         "gulp-postcss": "^9.0.1",
         "postcss": "^8.4.16",
         "postcss-import": "^14.1.0",
-        "react-multi-select-component": "^4.3.4",
         "tailwindcss": "^3.1.8",
         "typescript": "4.5.5",
         "webpack-bundle-analyzer": "^4.9.0"
