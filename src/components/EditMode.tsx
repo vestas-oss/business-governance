@@ -60,6 +60,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setList(value);
                                 }}
+                                description="Title of the list to show data from."
                             />
                             <TextField
                                 label="Start Node"
@@ -67,6 +68,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setStartNode(value);
                                 }}
+                                description="ID of the initial item to focus."
                             />
                             <TextField
                                 label="Parent Column"
@@ -74,6 +76,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setParentColumnName(value);
                                 }}
+                                description="Internal name of the column that acts as the parent/child relationship."
                             />
                         </div>
                     </PivotItem>
