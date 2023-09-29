@@ -12,6 +12,19 @@ Repository for creating a hierarchical representation of entities, e.g. legal en
 
 ![Web Part Toolbox](images/toolbox.png)
 
+## Getting Started
+
+### Empty Site
+
+When the Web Part is inserted into a page, it will try to make qualified guesses about what data to show. If the
+site is empty, it will not be able to make a guess, instead it will show:
+
+![Bootstrap](images/bootstrap.png)
+
+Clicking the button will setup the initial lists and data structure to the the solution running:
+
+![Bootstraped](images/bootstraped.png)
+
 ## Development
 
 -   Install [Node.js](https://nodejs.org/) `v18`
