@@ -25,6 +25,15 @@ Clicking the button will setup the initial lists and data structure to the the s
 
 ![Bootstraped](images/bootstraped.png)
 
+### Existing Site
+
+When inserting the Web Part into an existing site with data, the Web Part will show data from an arbitrary list. To
+configure what data to show, edit the page and update the properties in the Web Part:
+
+![Configuration](images/configuration.png)
+
+(The Bootstrap-functionality is also available from the Advanced tab)
+
 ## Development
 
 -   Install [Node.js](https://nodejs.org/) `v18`
