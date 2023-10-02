@@ -4,20 +4,19 @@ export type EntityUserItem = {
     EditorId: string;
     isDeleted: boolean;
 
+    Role: {
+        Title: string;
+    } & ({ KeyId: string } | { RoleId: string })
+} & ({
     Member: {
         Title: string;
         Name: string;
         JobTitle: string;
     }
-
-    Role: {
-        Id: number;
+} | {
+    User: {
         Title: string;
-        KeyId: string;
-        Order0: number;
+        Name: string;
+        JobTitle: string;
     }
-
-    EntityName: {
-        Id: number;
-    }
-}
+})

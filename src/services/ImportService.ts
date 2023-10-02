@@ -1,5 +1,5 @@
 import { SPFI } from "@pnp/sp";
-import { IFieldInfo } from "@pnp/sp/fields";
+import { FieldUserSelectionMode, IFieldInfo } from "@pnp/sp/fields";
 import "@pnp/sp/sites";
 import "@pnp/sp/webs";
 
@@ -10,9 +10,9 @@ type ListModel = {
         title: string,
         internalName?: string,
     } & (
-            { type?: "Text" | "Number" } |
+            { type?: "Text" | "Number" | "User" | "Boolean" } |
             { type: "Note", richText?: boolean } |
-            { type: "Lookup" }
+            { type: "Lookup", listId?: string }
         )>;
 
     items?: Array<Record<string, any>>;
@@ -53,17 +53,28 @@ export const ImportService = {
                         case "Number":
                             await list.fields.addNumber(internalName);
                             break;
+                        case "User":
+                            await list.fields.addUser(internalName, { SelectionMode: FieldUserSelectionMode.PeopleOnly });
+                            break;
+                        case "Boolean":
+                            await list.fields.addBoolean(internalName);
+                            break;
                         case "Note":
                             await list.fields.addMultilineText(internalName, {
                                 RichText: fieldModel.richText || false,
                             });
                             break;
                         case "Lookup": {
-                            // NOTE: assume lookup to current list
+                            let listId = fieldModel.listId;
+                            if (!listId) {
+                                // If not set, lookup to current list
+                                const listInfo = await list();
+                                listId = listInfo.Id;
+                            }
+
                             const webInfo = await sp.web();
-                            const listInfo = await list();
                             await list.fields.addLookup(internalName, {
-                                LookupListId: listInfo.Id,
+                                LookupListId: listId,
                                 LookupWebId: webInfo.Id,
                                 LookupFieldName: "Title",
                             });
@@ -98,6 +109,7 @@ export const ImportService = {
 
                     const field = fieldInfos.find(fi => fi.InternalName === key);
                     if (field?.TypeAsString === "Lookup") {
+                        // Map lookups to ids
                         const {
                             LookupList: lookupListId,
                             LookupField: lookupField

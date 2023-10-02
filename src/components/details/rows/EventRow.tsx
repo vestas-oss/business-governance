@@ -4,7 +4,6 @@ import { useConfiguration } from "@/hooks/useConfiguration";
 import { useSP } from "@/hooks/useSP";
 import { Services } from "@/services/Services";
 import { Entity } from "@/types/Entity";
-import { EventItem } from "@/types/items/EventItem";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "react-query";
@@ -22,7 +21,7 @@ export const EventRow = (props: Props) => {
     const configuration = useConfiguration();
 
     const { data: event } = useQuery({
-        queryKey: ["meetingInfo", entity.id],
+        queryKey: ["events", entity.id],
         queryFn: async () => {
             const timeZoneInfo = await sp.web.regionalSettings.timeZone();
 
@@ -43,7 +42,7 @@ export const EventRow = (props: Props) => {
                 return undefined;
             }
 
-            const event: EventItem = events[0];
+            const event = events[0];
 
             const format = "DD-MM-YYYY HH:mm";
             const startDate = event.Start
@@ -54,7 +53,7 @@ export const EventRow = (props: Props) => {
                 : "";
 
             return {
-                title: events[0].Title,
+                title: event.Title,
                 startDate,
                 endDate,
             };

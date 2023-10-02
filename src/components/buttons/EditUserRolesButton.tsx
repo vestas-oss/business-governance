@@ -15,9 +15,9 @@ export function EditUserRolesButton() {
     const { setView } = useDetailsView();
 
     const { data: currentUserHasPermissions } = useQuery({
-        queryKey: ["currentUserHasPermissions", configuration?.entityMemberList],
+        queryKey: ["currentUserHasPermissions", configuration?.entityUserRolesList],
         queryFn: () => {
-            const listTitle = configuration?.entityMemberList;
+            const listTitle = configuration?.entityUserRolesList;
             if (!listTitle) {
                 return;
             }

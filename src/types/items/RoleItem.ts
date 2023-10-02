@@ -2,7 +2,11 @@
 export type RoleItem = {
     Id: number,
     Title: string
+    Description?: string,
+} & ({
     KeyId: string
     Order0: number,
-    Description?: string,
-}
+} | {
+    RoleId: string
+    bgOrder: number,
+})

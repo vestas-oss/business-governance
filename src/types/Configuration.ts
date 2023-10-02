@@ -1,11 +1,9 @@
 export type Configuration = {
     entityListTitle?: string;
     entityLayoutListTitle?: string;
-    entityMemberList?: string;
-    // TODO: rename?
-    entityMemberRoleList?: string;
-    // TODO: rename?
-    entityMeetingList?: string;
+    entityUserRolesList?: string;
+    entityRolesList?: string;
+    entityEventsList?: string;
     parentColumn?: string;
     startNode?: string;
     filter?: string;

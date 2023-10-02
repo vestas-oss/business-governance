@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useSP } from "@/hooks/useSP";
+import { EntityLayoutSchema } from "@/services/EntityLayoutService";
 import { Services } from "@/services/Services";
 import { PrimaryButton, Spinner, SpinnerSize } from "@fluentui/react";
 import "@pnp/sp/content-types";
@@ -22,19 +23,24 @@ export function Bootstrap() {
         setBootstrapping(true);
 
         (async () => {
+            const currentUserInfo = await sp.web.currentUser();
+
             await Services.importService.import(sp, {
                 title: "Entities",
                 items: [
                     {
                         Title: "Directors",
+                        ChairpersonId: currentUserInfo.Id,
                     },
                     {
                         Title: "Management",
                         Parent: "Directors",
+                        ChairpersonId: currentUserInfo.Id,
                     },
                     {
                         Title: "Finance",
                         Parent: "Directors",
+                        ChairpersonId: currentUserInfo.Id,
                     },
                 ],
                 fields: [
@@ -42,11 +48,102 @@ export function Bootstrap() {
                         title: "Parent",
                         type: "Lookup",
                     },
+                    {
+                        title: "Chairperson",
+                        type: "User",
+                    },
+                ],
+            });
+
+            await Services.importService.import(sp, {
+                title: "Roles",
+                fields: [
+                    {
+                        title: "Role Id",
+                        internalName: "RoleId",
+                        type: "Text",
+                    },
+                    {
+                        title: "Description",
+                        type: "Text",
+                    },
+                    {
+                        title: "Order",
+                        internalName: "bgOrder",
+                        type: "Number",
+                    },
+                ],
+                items: [
+                    {
+                        Title: "Member",
+                        RoleId: "Member",
+                        bgOrder: 1,
+                        Description: "A member of the entity.",
+                    },
                 ],
             });
 
             const entitiesList = sp.web.lists.getByTitle("Entities");
+            const entitiesListInfo = await entitiesList();
+
+            const rolesList = sp.web.lists.getByTitle("Roles");
+            const rolesListInfo = await rolesList();
+
+            await Services.importService.import(sp, {
+                title: "User Roles",
+                fields: [
+                    {
+                        title: "User",
+                        type: "User",
+                    },
+                    {
+                        title: "Entity",
+                        type: "Lookup",
+                        listId: entitiesListInfo.Id,
+                    },
+                    {
+                        title: "Role",
+                        type: "Lookup",
+                        listId: rolesListInfo.Id,
+                    },
+                    {
+                        title: "Deleted",
+                        type: "Boolean",
+                        internalName: "isDeleted",
+                    },
+                ],
+            });
+
             const entitiesListContentTypes = await entitiesList.contentTypes();
+
+            const layout: EntityLayoutSchema[] = [
+                {
+                    field: "Title",
+                    type: "HeaderItalic",
+                    mappings: [],
+                },
+                {
+                    type: "Section",
+                    field: "Details",
+                    mappings: [
+                        {
+                            key: "ID",
+                            type: "DetailsProvider",
+                            value: "ID",
+                        },
+                        {
+                            key: "Chairperson",
+                            type: "DetailsProvider",
+                            value: "Chairperson",
+                        },
+                        {
+                            key: "Member",
+                            type: "MembersProvider",
+                            value: "Member",
+                        },
+                    ],
+                },
+            ];
 
             await Services.importService.import(sp, {
                 title: "Entity Layouts",
@@ -91,9 +188,25 @@ export function Bootstrap() {
                         bgContentTypeId: entitiesListContentTypes[0].Id.StringValue,
                         Icon: "People",
                         Description: "Group of individuals working together.",
+                        Layout: JSON.stringify(layout, undefined, "  "),
                     },
                 ],
             });
+
+            // Add Entity lookup to Events (if exists)
+            const listInfos = await sp.web.lists();
+            if (listInfos.find((l) => l.Title === "Events")) {
+                await Services.importService.import(sp, {
+                    title: "Events",
+                    fields: [
+                        {
+                            title: "Entity",
+                            type: "Lookup",
+                            listId: entitiesListInfo.Id,
+                        },
+                    ],
+                });
+            }
 
             window.location.reload();
         })();

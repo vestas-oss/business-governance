@@ -95,15 +95,23 @@ export function ConfigurationProvider(props: Props) {
                         l.Title === "EntityType" ||
                         l.Title === "EntityTypes"
                 )?.Title,
-                entityMeetingList: listInfos.find(
+                entityEventsList: listInfos.find(
                     (l) => l.Title === "Meetings" || l.Title === "Events"
                 )?.Title,
-                entityMemberList: listInfos.find((l) => l.Title === "Roles")?.Title,
-                entityMemberRoleList: listInfos.find((l) => l.Title === "MemberRoles")?.Title,
+                entityUserRolesList: listInfos.find((l) => l.Title === "Roles")?.Title,
+                entityRolesList: listInfos.find((l) => l.Title === "MemberRoles")?.Title,
                 filter: selectFirst(searchParamsConfiguration.filter, properties?.filter),
                 search: selectFirst(searchParamsConfiguration.search, properties?.search),
                 startNode: selectFirst(searchParamsConfiguration.startNode, properties?.startNode),
             };
+
+            if (
+                listInfos.find((l) => l.Title === "Roles") &&
+                listInfos.find((l) => l.Title === "User Roles")
+            ) {
+                configuration.entityUserRolesList = "User Roles";
+                configuration.entityRolesList = "Roles";
+            }
 
             const getParentColumn = async () => {
                 if (properties?.parentColName) {

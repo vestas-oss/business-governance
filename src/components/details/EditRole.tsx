@@ -27,16 +27,16 @@ export function EditRole() {
         if (!entity) {
             return [];
         }
-        const roleKeyId = role?.KeyId;
-        const users = entity.memberRoles?.filter(
+        const roleKeyId = "RoleId" in role ? role.RoleId : role.KeyId;
+        const users = entity.users?.filter(
             (user) => user.roleId === roleKeyId.toString() && !user.isDeleted
         );
 
-        return users.map((m) => m.name);
-    }, [entity, role?.KeyId]);
+        return users.map((user) => user.name);
+    }, [entity, role]);
 
     const onSave = useCallback(async () => {
-        if (!entity || !configuration?.entityMemberList) {
+        if (!entity || !configuration?.entityUserRolesList) {
             return;
         }
         if (selectedUsers === undefined) {
@@ -50,13 +50,13 @@ export function EditRole() {
         const usersSet = new Set(users);
 
         const removes = defaultSelectedUsers.filter((u) => !usersSet.has(u));
-        const adds = users.filter((u) => !currentUsersSet.has(u));
+        const adds = users.filter((user) => !currentUsersSet.has(user));
 
         await Services.entityUserService.removeUsers(sp, configuration, entity, role, removes);
         await Services.entityUserService.addUsers(sp, configuration, entity, role, adds);
 
         // Reload users
-        entity.memberRoles =
+        entity.users =
             (await Services.entityUserService.getUsers(sp, configuration, entity.id)) || [];
 
         setView({ view: "details" });

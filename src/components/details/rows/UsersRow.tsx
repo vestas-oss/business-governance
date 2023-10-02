@@ -16,7 +16,7 @@ export const UsersRow = (props: Props) => {
 
     const roleId = row.value;
 
-    let users = entity.memberRoles?.filter((user) => user.roleId === roleId && !user.isDeleted);
+    let users = entity.users?.filter((user) => user.roleId === roleId && !user.isDeleted);
     if (!users || users.length === 0) {
         return null;
     }

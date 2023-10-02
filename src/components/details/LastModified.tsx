@@ -25,7 +25,7 @@ export function LastModified(props: Props) {
         }
 
         array = array.concat(
-            entity.memberRoles?.map((m) => {
+            entity.users?.map((m) => {
                 return {
                     modifiedById: parseInt(m.editorId),
                     modified: new Date(m.modified),
@@ -48,7 +48,7 @@ export function LastModified(props: Props) {
             modified: latest.modified,
             modifiedById: latest.modifiedById,
         };
-    }, [entity.item.EditorId, entity.item.Modified, entity.memberRoles]);
+    }, [entity.item.EditorId, entity.item.Modified, entity.users]);
 
     const { data: modifiedBy } = useQuery({
         queryKey: ["user", modifiedById],

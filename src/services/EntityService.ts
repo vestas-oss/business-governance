@@ -60,7 +60,7 @@ export const EntityService = {
 
         const entity = new Entity(item);
         if (users) {
-            entity.memberRoles = users;
+            entity.users = users;
         }
 
         return entity;

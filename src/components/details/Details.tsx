@@ -71,7 +71,9 @@ export function Details(props: Props) {
                             row.description = field?.Description;
                         }
                         if (row.type === "MembersProvider") {
-                            const role = roles?.find((r) => r.KeyId === value);
+                            const role = roles?.find((r) =>
+                                "RoleId" in r ? r.RoleId === value : r.KeyId === value
+                            );
                             row.description = role?.Description;
                         }
                     }
