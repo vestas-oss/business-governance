@@ -56,7 +56,18 @@ export function LastModified(props: Props) {
             if (!modifiedById) {
                 return undefined;
             }
-            return sp.web.siteUsers.getById(modifiedById)();
+            try {
+                return sp.web.siteUsers
+                    .getById(modifiedById)()
+                    .catch(() => {
+                        return { Title: "Unknown" };
+                    });
+            } catch (error: any) {
+                if (error?.status === 404) {
+                    return { Title: "Unknown" };
+                }
+                throw error;
+            }
         },
     });
 
