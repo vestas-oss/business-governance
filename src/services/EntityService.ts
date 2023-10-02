@@ -17,7 +17,7 @@ export const EntityService = {
     },
 
     getEntities: async (sp: SPFI, configuration?: Configuration) => {
-        let selects = ["Id", "Title", "ContentTypeId"];
+        let selects = ["Id", "Title", "ContentTypeId", "ContentType/Name"];
         if (configuration?.parentColumn) {
             selects.push(`${configuration?.parentColumn}Id`);
         }
@@ -28,7 +28,12 @@ export const EntityService = {
         const items: Array<any> | undefined = await entityList?.items.
             top(5000).
             filter(configuration?.filter || "").
+            expand("ContentType").
             select(...selects)();
+
+        items?.forEach(item => {
+            item.ContentType = item.ContentType?.Name;
+        });
 
         items?.sort((a, b) => b.ContentTypeId.localeCompare(a.ContentTypeId) || a.Title?.localeCompare(b.Title));
 
