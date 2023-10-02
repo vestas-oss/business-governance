@@ -11,6 +11,7 @@ import "@pnp/sp/webs";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Back } from "./Back";
+import { Debug } from "./Debug";
 import { Legend } from "./Legend";
 import { Search } from "./Search";
 import { SearchResults } from "./SearchResults";
@@ -160,7 +161,34 @@ export function ReadMode(props: Props) {
             return groups;
         }
 
-        if (!currentNode) {
+        if (currentNode === "") {
+            const groups = new Array<{ title: string; order: number; nodes: Array<Node> }>();
+            const nodes = [];
+            for (let i = 0; i !== entities.length; i++) {
+                const entity = entities[i];
+
+                const id = entity.Id;
+                const layout = getLayout(entity);
+                const nodeObj: Node = {
+                    title: entity.Title,
+                    icon: layout?.icon || defaultIcon,
+                    color: layout?.color || defaultColor,
+                    children: getChildren(id),
+                    onClick: () => {
+                        window.location.href = `#/selected/${id}`;
+                    },
+                    onExpand: () => {
+                        window.location.href = `#/focus/${id}`;
+                    },
+                };
+                nodes.push(nodeObj);
+            }
+
+            groups.push({ title: "", order: 0, nodes });
+            return groups;
+        }
+
+        if (currentNode === undefined) {
             return [];
         }
 
@@ -248,29 +276,34 @@ export function ReadMode(props: Props) {
     }
 
     return (
-        <div className="w-full flex flex-col items-center">
-            {properties?.search || properties?.legend ? (
-                <div className="flex justify-between align-middle pb-6 w-full">
-                    <div>
-                        <Back />
-                        {properties?.legend ? <Legend /> : null}
+        <>
+            <div className="w-full flex flex-col items-center">
+                {properties?.search || properties?.legend ? (
+                    <div className="flex justify-between align-middle pb-6 w-full">
+                        <div>
+                            <Back />
+                            {properties?.legend ? <Legend /> : null}
+                        </div>
+                        {configuration?.search ? <Search onResults={setResults} /> : <div />}
                     </div>
-                    {configuration?.search ? <Search onResults={setResults} /> : <div />}
-                </div>
-            ) : null}
-            {results ? (
-                <SearchResults results={results} />
-            ) : (
-                <>
-                    <Tree path={path} groups={groups} />
-                    {selected ? details(selected, onDismissCallback) : null}
-                </>
-            )}
-            {map.size > 0 && path.length === 0 && currentNode ? (
-                <div>
-                    Node &#39;{currentNode}&#39; not found, <a href="#">click here to refresh</a>.
-                </div>
-            ) : null}
-        </div>
+                ) : null}
+                {results ? (
+                    <SearchResults results={results} />
+                ) : (
+                    <>
+                        <Tree path={path} groups={groups} />
+                        {selected ? details(selected, onDismissCallback) : null}
+                    </>
+                )}
+                {map.size > 0 && path.length === 0 && currentNode ? (
+                    <div>
+                        Node &#39;{currentNode}&#39; not found,{" "}
+                        <a href="#">click here to refresh</a>.
+                    </div>
+                ) : null}
+            </div>
+            <Debug title="Path" data={path} />
+            <Debug title="Groups" data={groups} />
+        </>
     );
 }

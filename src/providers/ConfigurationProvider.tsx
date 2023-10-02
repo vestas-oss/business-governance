@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Debug } from "@/components/Debug";
 import { Bootstrap } from "@/components/lazy/Bootstrap";
 import { ConfigurationContext } from "@/contexts/ConfigurationContext";
 import { useProperties } from "@/hooks/useProperties";
@@ -157,6 +158,7 @@ export function ConfigurationProvider(props: Props) {
     return (
         <ConfigurationContext.Provider value={configuration}>
             {isFetched && children}
+            <Debug title="Configuration" data={configuration} />
         </ConfigurationContext.Provider>
     );
 }
