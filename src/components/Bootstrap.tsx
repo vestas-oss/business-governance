@@ -137,9 +137,14 @@ export function Bootstrap() {
                             value: "Chairperson",
                         },
                         {
-                            key: "Member",
+                            key: "Members",
                             type: "MembersProvider",
                             value: "Member",
+                        },
+                        {
+                            key: "Next Meeting",
+                            type: "MeetingInfo",
+                            value: "Next Meeting",
                         },
                     ],
                 },

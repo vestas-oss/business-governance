@@ -56,8 +56,9 @@ export function ConfigurationProvider(props: Props) {
                 return undefined;
             };
 
+            // Generic or Events and not Hidden
             const listInfos = await sp.web.lists.filter(
-                "BaseTemplate eq 100 and Hidden eq false"
+                "(BaseTemplate eq 100 or BaseTemplate eq 106) and Hidden eq false"
             )();
 
             const getEntityList = async () => {

@@ -117,9 +117,7 @@ export const EntityUserService = {
                 // Add new
                 const user = await sp.web.ensureUser(users[i]);
                 const itemProperties = {
-                    // MemberId: user.data.Id,
                     RoleId: role.Id,
-                    // EntityNameId: entity.id,
                 } as any;
                 itemProperties[`${userField}Id`] = user.data.Id;
                 itemProperties[`${entityField}Id`] = entity.id;

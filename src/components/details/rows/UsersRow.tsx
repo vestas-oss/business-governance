@@ -26,11 +26,15 @@ export const UsersRow = (props: Props) => {
         users = users.slice(0, 25);
         more = <div>more...</div>;
     }
-    const elements = users.map((mr, index) => {
-        const username = mr.userName.split("|")[2].split("@")[0].toUpperCase();
+    const elements = users.map((user, index) => {
+        const username = user.userName.split("|")[2].split("@")[0].toUpperCase();
+        let title = `${user.title} (${username})`;
+        if (user.jobTitle) {
+            title += `, ${user.jobTitle}`;
+        }
         return (
             <div key={`member-${index}`} className="w-full">
-                {`${mr.title} (${username}), ${mr.jobTitle}`}
+                {title}
             </div>
         );
     });

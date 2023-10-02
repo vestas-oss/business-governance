@@ -45,15 +45,15 @@ export const EventRow = (props: Props) => {
             const event = events[0];
 
             const format = "DD-MM-YYYY HH:mm";
-            const startDate = event.Start
-                ? dayjs(event.Start).utc(true).utcOffset(offset).format(format)
+            const startDate = event.start
+                ? dayjs(event.start).utc(true).utcOffset(offset).format(format)
                 : "";
-            const endDate = event.End
-                ? dayjs(event.End).utc(true).utcOffset(offset).format(format)
+            const endDate = event.end
+                ? dayjs(event.end).utc(true).utcOffset(offset).format(format)
                 : "";
 
             return {
-                title: event.Title,
+                title: event.title,
                 startDate,
                 endDate,
             };
