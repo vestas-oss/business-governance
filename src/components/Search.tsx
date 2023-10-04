@@ -32,11 +32,19 @@ export function Search(props: Props) {
         if (!databasePopulated && isFetched) {
             setDatabasePopulated(true);
 
+            const idSet = new Set(entities?.map((e) => e.Id.toString()));
+
             const documents =
                 entities?.map((e) => {
+                    let parent = e[`${configuration?.parentColumn}Id`]?.toString() || "";
+                    if (parent && !idSet.has(parent)) {
+                        // Note: if parent is not in the list of entities, set to empty
+                        parent = "";
+                    }
+
                     return {
                         id: e.Id.toString(),
-                        parent: e[`${configuration?.parentColumn}Id`]?.toString() || "",
+                        parent,
                         title: e.Title,
                     };
                 }) || [];
