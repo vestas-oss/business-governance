@@ -228,10 +228,14 @@ export function ReadMode(props: Props) {
 
         groupsMap.forEach((nodes, key) => {
             const layout = layouts.find((l) => l.id === key);
-            let title = `'${configuration?.entityListTitle}' under '${parentEntity.title}'`;
+            let title = `'${configuration?.entityListTitle}'`;
 
             if (properties?.group && layout) {
-                title = `'${layout.plural || layout.title}' under '${parentEntity.title}'`;
+                title = `'${layout.plural || layout.title}'`;
+            }
+
+            if (parentEntity?.title) {
+                title += ` under '${parentEntity.title}'`;
             }
 
             const existingGroup = groups.find((g) => g.title === title);
