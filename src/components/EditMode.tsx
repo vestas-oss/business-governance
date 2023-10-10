@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Bootstrap } from "@/components/lazy/Bootstrap";
 import { useProperties } from "@/hooks/useProperties";
 import { useSetProperties } from "@/hooks/useSetProperties";
 import { Pivot, PivotItem, Separator, TextField, Toggle } from "@fluentui/react";
@@ -60,6 +61,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setList(value);
                                 }}
+                                description="Title of the list to show data from."
                             />
                             <TextField
                                 label="Start Node"
@@ -67,6 +69,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setStartNode(value);
                                 }}
+                                description="ID of the initial item to focus."
                             />
                             <TextField
                                 label="Parent Column"
@@ -74,6 +77,7 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setParentColumnName(value);
                                 }}
+                                description="Internal name of the column that acts as the parent/child relationship."
                             />
                         </div>
                     </PivotItem>
@@ -109,23 +113,26 @@ export function EditMode() {
                         </div>
                     </PivotItem>
                     <PivotItem headerText="Advanced">
-                        <div className="w-80">
-                            <TextField
-                                label="Filter"
-                                value={filter}
-                                onChange={(e, value) => {
-                                    setFilter(value);
-                                }}
-                                description="OData filter (example: Title eq 'Example')"
-                            />
-                            <TextField
-                                label="Select"
-                                value={select}
-                                onChange={(e, value) => {
-                                    setSelect(value);
-                                }}
-                                description="OData select (comma separated)"
-                            />
+                        <div className="flex flex-row justify-between">
+                            <div className="w-80">
+                                <TextField
+                                    label="Filter"
+                                    value={filter}
+                                    onChange={(e, value) => {
+                                        setFilter(value);
+                                    }}
+                                    description="OData filter (example: Title eq 'Example')"
+                                />
+                                <TextField
+                                    label="Select"
+                                    value={select}
+                                    onChange={(e, value) => {
+                                        setSelect(value);
+                                    }}
+                                    description="OData select (comma separated)"
+                                />
+                            </div>
+                            <Bootstrap />
                         </div>
                     </PivotItem>
                 </Pivot>

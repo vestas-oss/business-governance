@@ -1,10 +1,10 @@
 import { Configuration } from "@/types/Configuration";
 import { Entity } from "@/types/Entity";
-import { EntityMember } from "@/types/EntityMember";
 import { SPFI } from "@pnp/sp";
 import "@pnp/sp/fields";
 import { IFieldInfo } from "@pnp/sp/fields/types";
 import "@pnp/sp/items/get-all";
+import { Services } from "./Services";
 
 export const EntityService = {
     getEntityList: (sp: SPFI, configuration?: Configuration) => {
@@ -15,8 +15,9 @@ export const EntityService = {
         const title = configuration.entityListTitle;
         return sp.web.lists.getByTitle(title);
     },
+
     getEntities: async (sp: SPFI, configuration?: Configuration) => {
-        let selects = ["Id", "Title", "ContentTypeId"];
+        let selects = ["Id", "Title", "ContentTypeId", "ContentType/Name"];
         if (configuration?.parentColumn) {
             selects.push(`${configuration?.parentColumn}Id`);
         }
@@ -27,7 +28,12 @@ export const EntityService = {
         const items: Array<any> | undefined = await entityList?.items.
             top(5000).
             filter(configuration?.filter || "").
+            expand("ContentType").
             select(...selects)();
+
+        items?.forEach(item => {
+            item.ContentType = item.ContentType?.Name;
+        });
 
         items?.sort((a, b) => b.ContentTypeId.localeCompare(a.ContentTypeId) || a.Title?.localeCompare(b.Title));
 
@@ -49,46 +55,25 @@ export const EntityService = {
             return item;
         };
 
-        // Members
-        const getMembers = async () => {
-            try {
-                if (configuration.entityMemberList) {
-                    const selects = ["Member/Title", "Member/Name", "Role/Order0", "Role/KeyId", "Role/Title", "Role/Id", "Role/Category", "ID", "EntityName/Title", "EntityName/Id", "Member/Name", "Member/JobTitle", "Modified", "EditorId"];
-                    const expands = ["Member", "Role", "EntityName"];
-                    const order = "Member/Title";
-
-                    const memberItems = await sp.web.lists.getByTitle(configuration.entityMemberList).items.
-                        expand(...expands).
-                        select(...selects).
-                        orderBy(order).filter(`EntityName/Id eq ${id}`).getAll();
-                    const members = memberItems.map(m => new EntityMember(m));
-
-                    return members.filter(member => member.entityId.toString() === id.toString());
-                    // entity.members = members.filter(member =>
-                    //     member.entityId.toString() === id.toString() &&
-                    //     member.roleCategory === "Active")?.length;
-                }
-            } catch (e) {
-                console.log(`business governance: failed to get ${configuration.entityMemberList} for entity ${id} (${e?.toString()})`);
-            }
-        };
-
-        const [item, members, contentTypeItem] = await Promise.all([
+        const [item, users, contentTypeItem] = await Promise.all([
             getItem(),
-            getMembers(),
+            Services.entityUserService.getUsers(sp, configuration, id),
             getContentTypeItem(),
         ]);
 
         item.ContentType = contentTypeItem.ContentType?.Name;
 
         const entity = new Entity(item);
-        if (members) {
-            entity.memberRoles = members;
+        if (users) {
+            entity.users = users;
         }
 
         return entity;
     },
 
+    /**
+     * Get extra columns from the entity
+     */
     getEntityDetails: async (sp: SPFI, configuration: Configuration, entityId: number, selects?: Array<string>, expands?: Array<string>): Promise<any | undefined> => {
         const entityList = EntityService.getEntityList(sp, configuration);
         let item = entityList.items.getById(entityId);

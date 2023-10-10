@@ -9,7 +9,8 @@ export type EntityLayoutSchema = {
         key: string,
         value: string,
         type: EntityDetailsRowType,
-        description?: string
+        description?: string,
+        fields?: Array<string>,
     }[];
     type: "HeaderItalic" | "Section";
 }
@@ -59,12 +60,14 @@ export const EntityLayoutService = {
                             const title = row.key;
                             const value = row.value;
                             const description = row.description;
+                            const fields = row.fields;
 
                             rows.push({
                                 title,
                                 type: row.type,
                                 description,
                                 value,
+                                fields,
                             });
                         }
 

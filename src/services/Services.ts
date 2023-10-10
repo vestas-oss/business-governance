@@ -1,6 +1,7 @@
 import { EntityEventService } from "./EntityEventService";
 import { EntityLayoutService } from "./EntityLayoutService";
 import { EntityService } from "./EntityService";
+import { EntityUserService } from "./EntityUserService";
 import { ImportService } from "./ImportService";
 
 export const Services = {
@@ -8,4 +9,5 @@ export const Services = {
     entityLayoutService: EntityLayoutService,
     entityEventService: EntityEventService,
     importService: ImportService,
+    entityUserService: EntityUserService,
 };

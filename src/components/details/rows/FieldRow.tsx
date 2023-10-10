@@ -87,6 +87,7 @@ export const FieldRow = (props: Props) => {
             case "Choice":
             case "Number":
             case "Computed":
+            case "Counter":
             case "Text":
                 if (!value) {
                     return null;

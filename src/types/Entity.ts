@@ -1,10 +1,10 @@
-import { EntityMember } from "./EntityMember";
+import { EntityUser } from "./EntityUser";
 
 export class Entity {
     public id: number;
     public title: string;
     public item: any = undefined;
-    public memberRoles: Array<EntityMember> = [];
+    public users: Array<EntityUser> = [];
 
     constructor(item: any) {
         this.item = item;

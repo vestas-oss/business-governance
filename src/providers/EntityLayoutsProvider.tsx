@@ -33,11 +33,14 @@ export function EntityLayoutsProvider(props: Props) {
             if (!layouts) {
                 return undefined;
             }
-
             return layouts?.find((layout) => {
                 // Check content type condition
                 const contentType = layout.contentType;
-                if (contentType && entity.ContentTypeId.indexOf(contentType) === 0) {
+                if (
+                    contentType &&
+                    (entity.ContentTypeId.indexOf(contentType) === 0 ||
+                        entity.ContentType === contentType)
+                ) {
                     return true;
                 }
 

@@ -51,6 +51,14 @@ export function Details(props: Props) {
         },
     });
 
+    const { data: roles } = useQuery({
+        queryKey: ["roles"],
+        queryFn: async () => {
+            return Services.entityUserService.getRoles(sp, configuration!);
+        },
+        enabled: configuration !== undefined,
+    });
+
     const entityLayout = useMemo(() => {
         const populateLayout = (layout: EntityLayout): EntityLayout => {
             layout.layout?.sections.forEach((section) => {
@@ -58,8 +66,16 @@ export function Details(props: Props) {
                     const value = row.value;
 
                     if (!row.description) {
-                        const field = fields?.find((f) => f.InternalName === value);
-                        row.description = field?.Description;
+                        if (row.type === "DetailsProvider") {
+                            const field = fields?.find((f) => f.InternalName === value);
+                            row.description = field?.Description;
+                        }
+                        if (row.type === "MembersProvider") {
+                            const role = roles?.find((r) =>
+                                "RoleId" in r ? r.RoleId === value : r.KeyId === value
+                            );
+                            row.description = role?.Description;
+                        }
                     }
                 });
             });
@@ -73,7 +89,7 @@ export function Details(props: Props) {
             return undefined;
         }
         return populateLayout(layout);
-    }, [entity, getEntityLayout, fields]);
+    }, [getEntityLayout, entity, fields, roles]);
 
     const { data: defaultLayout } = useQuery({
         queryKey: ["defaultLayout"],
@@ -173,7 +189,13 @@ export function Details(props: Props) {
                                 const rows = section.rows.map((row, index) => {
                                     switch (row.type) {
                                         case "MembersProvider":
-                                            return <UsersRow entity={entity} row={row} />;
+                                            return (
+                                                <UsersRow
+                                                    key={`${row.title}-${index}`}
+                                                    entity={entity}
+                                                    row={row}
+                                                />
+                                            );
                                         case "MeetingInfo":
                                             return (
                                                 <EventRow

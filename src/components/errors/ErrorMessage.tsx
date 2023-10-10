@@ -12,7 +12,7 @@ export function ErrorMessage(props: Props) {
     return (
         <div role="alert">
             <p>Something went wrong:</p>
-            <pre className="text-red-500">{error?.message}</pre>
+            <div className="text-red-500">{error?.message}</div>
         </div>
     );
 }

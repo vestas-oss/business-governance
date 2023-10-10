@@ -2,6 +2,7 @@ import * as React from "react";
 import { useConfiguration } from "@/hooks/useConfiguration";
 import { useDetailsView } from "@/hooks/useDetailsView";
 import { useSP } from "@/hooks/useSP";
+import { Services } from "@/services/Services";
 import { RoleItem } from "@/types/items/RoleItem";
 import { DefaultButton, IPersonaProps, PrimaryButton } from "@fluentui/react";
 import "@pnp/sp/site-users/web";
@@ -26,16 +27,16 @@ export function EditRole() {
         if (!entity) {
             return [];
         }
-        const roleKeyId = role?.KeyId;
-        const members = entity.memberRoles?.filter(
-            (memberRole) => memberRole.roleId === roleKeyId.toString()
+        const roleKeyId = "RoleId" in role ? role.RoleId : role.KeyId;
+        const users = entity.users?.filter(
+            (user) => user.roleId === roleKeyId.toString() && !user.isDeleted
         );
 
-        return members.map((m) => m.name);
-    }, [entity, role?.KeyId]);
+        return users.map((user) => user.name);
+    }, [entity, role]);
 
     const onSave = useCallback(async () => {
-        if (!entity || !configuration?.entityMemberList) {
+        if (!entity || !configuration?.entityUserRolesList) {
             return;
         }
         if (selectedUsers === undefined) {
@@ -49,41 +50,17 @@ export function EditRole() {
         const usersSet = new Set(users);
 
         const removes = defaultSelectedUsers.filter((u) => !usersSet.has(u));
-        const adds = users.filter((u) => !currentUsersSet.has(u));
+        const adds = users.filter((user) => !currentUsersSet.has(user));
 
-        // Removes
-        // console.log("Removes:");
-        // console.dir(removes);
-        for (let i = 0; i !== removes.length; i++) {
-            const member = entity.memberRoles?.find(
-                (memberRole) =>
-                    memberRole.roleId === role.KeyId.toString() && memberRole.name === removes[i]
-            );
-            if (!member) {
-                continue;
-            }
-            await sp.web.lists
-                .getByTitle(configuration.entityMemberList)
-                .items.getById(member.id)
-                .delete();
-        }
+        await Services.entityUserService.removeUsers(sp, configuration, entity, role, removes);
+        await Services.entityUserService.addUsers(sp, configuration, entity, role, adds);
 
-        // Add
-        // console.log("Add:");
-        // console.dir(adds);
-        for (let i = 0; i !== adds.length; i++) {
-            const user = await sp.web.ensureUser(adds[i]);
-            const itemProperties = {
-                MemberId: user.data.Id,
-                RoleId: role.Id,
-                EntityNameId: entity.id,
-            };
+        // Reload users
+        entity.users =
+            (await Services.entityUserService.getUsers(sp, configuration, entity.id)) || [];
 
-            await sp.web.lists.getByTitle(configuration.entityMemberList).items.add(itemProperties);
-        }
-
-        location.reload();
-    }, [configuration, defaultSelectedUsers, entity, role, selectedUsers, setView, sp.web]);
+        setView({ view: "details" });
+    }, [configuration, defaultSelectedUsers, entity, role, selectedUsers, setView, sp]);
 
     if (!entity) {
         return null;

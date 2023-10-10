@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Debug } from "@/components/Debug";
 import { Bootstrap } from "@/components/lazy/Bootstrap";
 import { ConfigurationContext } from "@/contexts/ConfigurationContext";
 import { useProperties } from "@/hooks/useProperties";
@@ -56,8 +57,9 @@ export function ConfigurationProvider(props: Props) {
                 return undefined;
             };
 
+            // Generic or Events and not Hidden
             const listInfos = await sp.web.lists.filter(
-                "BaseTemplate eq 100 and Hidden eq false"
+                "(BaseTemplate eq 100 or BaseTemplate eq 106) and Hidden eq false"
             )();
 
             const getEntityList = async () => {
@@ -95,15 +97,23 @@ export function ConfigurationProvider(props: Props) {
                         l.Title === "EntityType" ||
                         l.Title === "EntityTypes"
                 )?.Title,
-                entityMeetingList: listInfos.find(
+                entityEventsList: listInfos.find(
                     (l) => l.Title === "Meetings" || l.Title === "Events"
                 )?.Title,
-                entityMemberList: listInfos.find((l) => l.Title === "Roles")?.Title,
-                entityMemberRoleList: listInfos.find((l) => l.Title === "MemberRoles")?.Title,
+                entityUserRolesList: listInfos.find((l) => l.Title === "Roles")?.Title,
+                entityRolesList: listInfos.find((l) => l.Title === "MemberRoles")?.Title,
                 filter: selectFirst(searchParamsConfiguration.filter, properties?.filter),
                 search: selectFirst(searchParamsConfiguration.search, properties?.search),
                 startNode: selectFirst(searchParamsConfiguration.startNode, properties?.startNode),
             };
+
+            if (
+                listInfos.find((l) => l.Title === "Roles") &&
+                listInfos.find((l) => l.Title === "User Roles")
+            ) {
+                configuration.entityUserRolesList = "User Roles";
+                configuration.entityRolesList = "Roles";
+            }
 
             const getParentColumn = async () => {
                 if (properties?.parentColName) {
@@ -112,16 +122,20 @@ export function ConfigurationProvider(props: Props) {
 
                 if (configuration.entityListTitle) {
                     // Guess parent column
-                    const list = sp.web.lists.getByTitle(configuration.entityListTitle);
-                    const listInfo = await list();
-                    const lookupFields = await list.fields.filter(
-                        `TypeAsString eq 'Lookup' and (LookupList eq '${listInfo.Id}' or LookupList eq '{${listInfo.Id}}')`
-                    )();
+                    try {
+                        const list = sp.web.lists.getByTitle(configuration.entityListTitle);
+                        const listInfo = await list();
+                        const lookupFields = await list.fields.filter(
+                            `TypeAsString eq 'Lookup' and (LookupList eq '${listInfo.Id}' or LookupList eq '{${listInfo.Id}}')`
+                        )();
 
-                    if (lookupFields?.length > 0) {
-                        const name = lookupFields[0].InternalName;
-                        console.log(`business-governance: Guessed parent column  to '${name}'`);
-                        return name;
+                        if (lookupFields?.length > 0) {
+                            const name = lookupFields[0].InternalName;
+                            console.log(`business-governance: Guessed parent column  to '${name}'`);
+                            return name;
+                        }
+                    } catch {
+                        // Ignore
                     }
                 }
 
@@ -144,6 +158,7 @@ export function ConfigurationProvider(props: Props) {
     return (
         <ConfigurationContext.Provider value={configuration}>
             {isFetched && children}
+            <Debug title="Configuration" data={configuration} />
         </ConfigurationContext.Provider>
     );
 }

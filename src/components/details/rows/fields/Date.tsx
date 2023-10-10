@@ -4,15 +4,22 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 dayjs.extend(localizedFormat);
 
-type Props = {
-    field: string;
-    entity: Entity;
-};
+type Props =
+    | {
+          field: string;
+          entity: Entity;
+      }
+    | { value: string };
 
 export const Date = (props: Props) => {
-    const { field, entity } = props;
+    let value;
+    if ("field" in props) {
+        const { field, entity } = props;
+        value = entity.item?.[field];
+    } else {
+        value = props.value;
+    }
 
-    const value = entity.item[field];
     if (!value) {
         return <></>;
     }

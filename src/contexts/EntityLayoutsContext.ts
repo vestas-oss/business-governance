@@ -14,15 +14,23 @@ export type EntityDetailsHeader = {
     title: string;
 }
 
+export type FilesEntityDetailsRow = {
+    title: string;
+    description?: string;
+    type: "Files";
+    value: string;
+    fields?: Array<string>;
+};
+
 export type EntityDetailsRow = {
     title: string;
     description?: string;
-    type: EntityDetailsRowType;
+    type: "MembersProvider" | "MeetingInfo" | "DetailsProvider";
     // TODO: rename?
     value: string;
-}
+} | FilesEntityDetailsRow;
 
-export type EntityDetailsRowType = "EntityKey" | "MembersProvider" | "MeetingInfo" | "Files" | "DetailsProvider";
+export type EntityDetailsRowType = "MembersProvider" | "MeetingInfo" | "Files" | "DetailsProvider";
 
 export type EntityLayout = {
     icon: string;

@@ -6,6 +6,7 @@ type Props = {
     title: string;
     description?: string;
     children: ReactNode;
+    fullWidth?: boolean;
 };
 
 export function DetailsRow(props: Props) {
@@ -27,6 +28,10 @@ export function DetailsRow(props: Props) {
                 {title}
             </TooltipHost>
         );
+    }
+
+    if (props.fullWidth) {
+        return <div className="pt-[10px]">{children}</div>;
     }
 
     return (

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useConfiguration } from "@/hooks/useConfiguration";
 import { useDetailsView } from "@/hooks/useDetailsView";
 import { useSP } from "@/hooks/useSP";
-import { RoleItem } from "@/types/items/RoleItem";
+import { Services } from "@/services/Services";
 import { IContextualMenuItem, IContextualMenuProps, IconButton } from "@fluentui/react";
 import "@pnp/sp/forms";
 import { PermissionKind } from "@pnp/sp/security";
@@ -15,9 +15,9 @@ export function EditUserRolesButton() {
     const { setView } = useDetailsView();
 
     const { data: currentUserHasPermissions } = useQuery({
-        queryKey: ["currentUserHasPermissions", configuration?.entityMemberList],
+        queryKey: ["currentUserHasPermissions", configuration?.entityUserRolesList],
         queryFn: () => {
-            const listTitle = configuration?.entityMemberList;
+            const listTitle = configuration?.entityUserRolesList;
             if (!listTitle) {
                 return;
             }
@@ -37,24 +37,11 @@ export function EditUserRolesButton() {
     });
 
     const { data: roles } = useQuery({
-        queryKey: ["items", configuration?.entityMemberRoleList],
+        queryKey: ["roles"],
         queryFn: async () => {
-            const listTitle = configuration?.entityMemberRoleList;
-            if (!listTitle) {
-                return;
-            }
-
-            try {
-                const items: Array<RoleItem> = await sp?.web.lists.getByTitle(listTitle).items();
-                items.sort((a, b) => a.Order0 - b.Order0);
-                return items;
-            } catch (error: any) {
-                if (error?.status === 404) {
-                    return [];
-                }
-                throw error;
-            }
+            return Services.entityUserService.getRoles(sp, configuration!);
         },
+        enabled: configuration !== undefined,
     });
 
     const menuProps = useMemo<IContextualMenuProps>(() => {
@@ -67,6 +54,7 @@ export function EditUserRolesButton() {
                 onClick: () => {
                     setView({ view: "role", role });
                 },
+                title: role.Description || "",
             });
         });
 
