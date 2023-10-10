@@ -4,11 +4,10 @@ import {
     DetailsListLayoutMode,
     IColumn,
     IDetailsHeaderProps,
-    IDetailsRowProps,
     IRenderFunction,
     SelectionMode,
 } from "@fluentui/react";
-import { useMemo } from "react";
+import { cloneElement, useCallback, useMemo } from "react";
 import { ApplicationType, FileTypeIcon } from "./FileTypeIcon";
 
 // Original version from:
@@ -33,18 +32,7 @@ type Props = {
      */
     compact?: boolean;
 
-    /**
-     * Callback to override the default row rendering.
-     */
-    onRenderRow?: (props: IDetailsRowProps) => JSX.Element | undefined;
-    /**
-     * Class name to apply additional styles on list view wrapper
-     */
-    className?: string;
-    /**
-     * Class name to apply additional styles on list view
-     */
-    listClassName?: string;
+    onClick?: (item: any) => void;
 };
 
 export interface IViewField {
@@ -56,10 +44,6 @@ export interface IViewField {
      * Name of the field that will be used as the column title
      */
     displayName?: string;
-    /**
-     * Specify the field name that needs to be used to render a link
-     */
-    linkPropertyName?: string;
     /**
      * Specify if you want to enable column sorting
      */
@@ -83,7 +67,7 @@ export interface IViewField {
 }
 
 export const ListView = (props: Props) => {
-    const { compact, className, listClassName, items, iconFieldName, viewFields } = props;
+    const { compact, items, iconFieldName, viewFields, onClick } = props;
 
     const columns = useMemo(() => {
         /**
@@ -112,21 +96,6 @@ export const ListView = (props: Props) => {
             if (field.render) {
                 return field.render;
             }
-
-            // Check if the URL property is specified
-            if (field.linkPropertyName) {
-                // eslint-disable-next-line react/display-name
-                return (item: any, index?: number, column?: IColumn) => {
-                    if (!field?.linkPropertyName || !column?.fieldName) {
-                        return null;
-                    }
-                    return (
-                        <a key={`${column.fieldName}-${index}`} href={item[field.linkPropertyName]}>
-                            {item[column.fieldName]}
-                        </a>
-                    );
-                };
-            }
         };
 
         const createColumns = (viewFields: IViewField[]): IColumn[] => {
@@ -135,7 +104,7 @@ export const ListView = (props: Props) => {
                     key: field.name,
                     name: field.displayName || field.name,
                     fieldName: field.name,
-                    minWidth: field.minWidth || 50,
+                    minWidth: field.minWidth || 105,
                     maxWidth: field.maxWidth,
                     isResizable: field.isResizable,
                     onRender: fieldRender(field),
@@ -158,11 +127,6 @@ export const ListView = (props: Props) => {
         return columns;
     }, [iconFieldName, viewFields]);
 
-    /**
-     * Custom render of header
-     * @param props
-     * @param defaultRender
-     */
     const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (props, defaultRender) => {
         if (!props) {
             return null;
@@ -172,8 +136,25 @@ export const ListView = (props: Props) => {
         return defaultRender?.(props) || null;
     };
 
+    const onItemInvoked = useCallback(
+        (item: any) => {
+            onClick?.(item);
+        },
+        [onClick]
+    );
+
+    const onRenderRow = useCallback(
+        (row: any, defaultRender: any) => {
+            return cloneElement(defaultRender(row), {
+                className: "cursor-pointer",
+                onClick: () => onItemInvoked(row.item),
+            });
+        },
+        [onItemInvoked]
+    );
+
     return (
-        <div className={className}>
+        <div>
             {!!items && (
                 <DetailsList
                     items={items}
@@ -182,8 +163,8 @@ export const ListView = (props: Props) => {
                     selectionPreservedOnEmptyClick={true}
                     layoutMode={DetailsListLayoutMode.justified}
                     compact={compact}
-                    className={listClassName}
                     onRenderDetailsHeader={onRenderDetailsHeader}
+                    onRenderRow={onRenderRow}
                 />
             )}
         </div>
