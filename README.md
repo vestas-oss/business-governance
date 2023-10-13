@@ -12,6 +12,14 @@ Repository for creating a hierarchical representation of entities, e.g. legal en
 
 ![Web Part Toolbox](images/toolbox.png)
 
+## Upgrading
+
+The project uses [Semantic Versioning](https://semver.org/) to version the releases, to upgrade to the next compatible version, follow the steps:
+
+1. Download the latest package `Vestas.BusinessGovernance.Core.sppkg` from [releases](https://github.com/vestas-digital-employee-tools/business-governance/releases).
+
+2. Overwrite the existing file in your app catalog.
+
 ## Getting Started
 
 ### Empty Site
