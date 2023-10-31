@@ -8,8 +8,8 @@
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
     "developer": {
-      "name": "Vestas",
-      "websiteUrl": "",
+      "name": "Business Governance",
+      "websiteUrl": "https://github.com/vestas-digital-employee-tools/business-governance/",
       "privacyUrl": "",
       "termsOfUseUrl": "",
       "mpnId": ""
@@ -42,6 +42,6 @@
     ]
   },
   "paths": {
-    "zippedPackage": "solution/Vestas.BusinessGovernance.Core.sppkg"
+    "zippedPackage": "solution/BusinessGovernance.Core.sppkg"
   }
 }
