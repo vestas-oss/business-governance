@@ -22,7 +22,11 @@ export class ConfigurationService {
                 (list) =>
                     list.Title !== "EntityType" &&
                     list.Title !== "Configuration" &&
-                    list.Title !== "Entity Layouts"
+                    list.Title !== "Entity Layouts" &&
+                    list.Title !== "Meetings" && 
+                    list.Title !== "Events" &&
+                    list.Title !== "Roles" &&
+                    list.Title !== "User Roles"
             );
 
             if (lists.length > 0) {

@@ -39,10 +39,10 @@ export class EntityUserService {
         }
     }
 
-    public getUsers = async (id: number | string) => {
+    public getUsers = async (entityId?: number | string) => {
         const configuration = await this.configurationService.getConfiguration();
 
-        if (!configuration.entityUserRolesList) {
+        if (!configuration.entityUserRolesList || !configuration.entityRolesList) {
             return undefined;
         }
 
@@ -56,13 +56,13 @@ export class EntityUserService {
             const userFieldInfo = fields.find(f => f.InternalName === "Member" || f.InternalName === "User");
             const userField = userFieldInfo?.InternalName || "User";
 
-            const rolesList = this.sp.web.lists.getByTitle(configuration.entityRolesList!);
+            const rolesList = this.sp.web.lists.getByTitle(configuration.entityRolesList);
             const rolesListFields = await rolesList.fields.select("InternalName")();
             const roleIdFieldInfo = rolesListFields.find(f => f.InternalName === "KeyId" || f.InternalName === "RoleId");
             const roleIdField = roleIdFieldInfo?.InternalName || "RoleId";
 
             const selects = [
-                "ID", "Modified", "EditorId", "isDeleted",
+                "ID", "Modified", "EditorId", "isDeleted", `${entityField}Id`,
                 `${userField}/Title`, `${userField}/Name`, `${userField}/JobTitle`, `${userField}/Name`,
                 `Role/${roleIdField}`, `Role/Title`,
             ];
@@ -72,17 +72,25 @@ export class EntityUserService {
             ];
             const order = `${userField}/Title`;
 
-            const userItems = await list.items.
+            const items = list.items.
                 expand(...expands).
                 select(...selects).
-                orderBy(order).
-                filter(`${entityField}/Id eq ${id}`).
-                getAll();
+                orderBy(order);
+
+            let userItems: Array<any>;
+            if (!entityId) {
+                // Get all users
+                userItems = await items.getAll();
+            } else {
+                userItems = await items.
+                    filter(`${entityField}/Id eq ${entityId}`).
+                    getAll();
+            }
             const users = userItems.map(m => new EntityUser(m));
 
             return users;
         } catch (e: any) {
-            console.log(`business governance: failed to get ${configuration.entityUserRolesList} for entity ${id} (${e?.toString()})`);
+            console.log(`business governance: failed to get ${configuration.entityUserRolesList} for entity ${entityId} (${e?.toString()})`);
         }
     }
 

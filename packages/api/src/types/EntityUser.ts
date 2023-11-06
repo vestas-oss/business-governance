@@ -6,6 +6,7 @@ export class EntityUser {
     public role: string;
     public roleId: string;
     public id: number;
+    public entityId?: number;
     public userName: string;
     public jobTitle: string;
     public modified: string;
@@ -25,6 +26,12 @@ export class EntityUser {
             this.title = item.Member.Title;
             this.userName = item.Member.Name;
             this.jobTitle = item.Member.JobTitle;
+        }
+
+        if ("EntityNameId" in item) {
+            this.entityId = item.EntityNameId;
+        } else {
+            this.entityId = item.EntityId;
         }
 
         this.roleId = "RoleId" in item.Role ? item.Role.RoleId : item.Role.KeyId;

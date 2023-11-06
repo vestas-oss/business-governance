@@ -6,11 +6,15 @@ import type { IFieldInfo } from "@pnp/sp/fields/types";
 import "@pnp/sp/fields/index.js";
 import { Entity } from "./types/Entity.js";
 import { EntityUserService } from "./EntityUserService.js";
+import { EntityEventService } from "./EntityEventService.js";
+import { EntityUser } from "./types/EntityUser.js";
+import { EntityItem } from "./types/items/EntityItem.js";
+import { Event } from "./types/Event.js";
 
 export class EntityService {
     private readonly configurationService: ConfigurationService;
 
-    constructor(private readonly sp: SPFI, configurationPreset?: Configuration) {
+    constructor(private readonly sp: SPFI, private configurationPreset?: Configuration) {
         this.configurationService = new ConfigurationService(sp, configurationPreset);
     }
 
@@ -23,7 +27,11 @@ export class EntityService {
         return this.sp.web.lists.getByTitle(title);
     }
 
-    public getEntities = async () => {
+    public async getEntities(): Promise<Array<EntityItem>>;
+    public async getEntities(include?: Array<"events">): Promise<Array<EntityItem & { events: Array<Event> }>>;
+    public async getEntities(include?: Array<"users">): Promise<Array<EntityItem & { users: Array<EntityUser> }>>;
+    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users: Array<EntityUser> }>>;
+    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users: Array<EntityUser> }>> {
         const configuration = await this.configurationService.getConfiguration();
         let selects = ["Id", "Title", "ContentTypeId", "ContentType/Name"];
         if (configuration?.parentColumn) {
@@ -33,17 +41,62 @@ export class EntityService {
             selects = selects.concat(configuration.select.split(",").map(s => s.trim()));
         }
         const entityList = this.getEntityList(configuration);
-        const items: Array<any> | undefined = await entityList?.items.
+        if (!entityList) {
+            return [];
+        }
+        const items: Array<any> = await entityList.items.
             top(5000).
             filter(configuration?.filter || "").
             expand("ContentType").
             select(...selects)();
 
-        items?.forEach(item => {
+        items.forEach(item => {
             item.ContentType = item.ContentType?.Name;
         });
 
-        items?.sort((a, b) => b.ContentTypeId.localeCompare(a.ContentTypeId) || a.Title?.localeCompare(b.Title));
+        items.sort((a, b) => b.ContentTypeId.localeCompare(a.ContentTypeId) || a.Title?.localeCompare(b.Title));
+
+        const getMap = <T extends { entityId?: number }>(array: Array<T>) => {
+            const map = new Map<number, Array<T>>();
+            array?.forEach(item => {
+                if (!item.entityId) {
+                    return;
+                }
+                if (map.has(item.entityId)) {
+                    map.get(item.entityId)?.concat(item);
+                    return;
+                }
+                map.set(item.entityId, [item]);
+            });
+
+            return map;
+        }
+
+        if (include?.includes("users")) {
+            const userService = new EntityUserService(this.sp, this.configurationPreset);
+            const users = await userService.getUsers();
+
+            if (users) {
+                const userMap = getMap(users);
+
+                items.forEach(item => {
+                    item.users = userMap.get(item.Id);
+                });
+            }
+        }
+
+        if (include?.includes("events")) {
+            const eventService = new EntityEventService(this.sp, this.configurationPreset);
+            const events = await eventService.getEntityEvents();
+
+            if (events) {
+                const eventMap = getMap(events);
+
+                items.forEach(item => {
+                    item.events = eventMap.get(item.Id);
+                });
+            }
+        }
 
         return items;
     }

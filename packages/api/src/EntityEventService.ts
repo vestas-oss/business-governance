@@ -12,7 +12,7 @@ export class EntityEventService {
         this.configurationService = new ConfigurationService(sp, configurationPreset);
     }
 
-    public getEntityEvents = async (entityId: number): Promise<Array<Event> | undefined> => {
+    public getEntityEvents = async (entityId?: number): Promise<Array<Event> | undefined> => {
         const configuration = await this.configurationService.getConfiguration();
 
         if (!configuration.entityEventsList) {
@@ -33,13 +33,21 @@ export class EntityEventService {
             const endFieldInfo = fields.find(f => f.InternalName === "EndDate" || f.InternalName === "End");
             const endField = endFieldInfo?.InternalName || "End";
 
-            const filter = `${entityField} eq ${entityId} and ${startField} ge datetime'${now}'`;
-            const items = await list.items.filter(filter).orderBy(startField, true)();
+            var items: Array<any>;
+            if (!entityId) {
+                const filter = `${startField} ge datetime'${now}'`;
+                items = await list.items.filter(filter).orderBy(startField, true)();
+            } else {
+                const filter = `${entityField} eq ${entityId} and ${startField} ge datetime'${now}'`;
+                items = await list.items.filter(filter).orderBy(startField, true)();
+            }
+
             return items.map(item => {
                 const event = {
                     title: item.Title,
                     start: item[startField],
                     end: item[endField],
+                    entityId: item[`${entityField}Id`],
                 };
 
                 return event;

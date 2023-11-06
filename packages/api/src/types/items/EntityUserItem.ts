@@ -19,4 +19,4 @@ export type EntityUserItem = {
         Name: string;
         JobTitle: string;
     }
-})
+}) & ({ EntityNameId: number } | { EntityId: number });

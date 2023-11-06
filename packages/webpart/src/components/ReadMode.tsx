@@ -84,7 +84,7 @@ export function ReadMode(props: Props) {
     }, [currentNode, map, entities, parentColumn]);
 
     const getChildren = useCallback(
-        (id: string) => {
+        (id: number | string) => {
             return entities?.filter((e) => e[`${parentColumn}Id`]?.toString() === id?.toString())
                 .length;
         },
