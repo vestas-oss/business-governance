@@ -1,6 +1,41 @@
 # Business Governance
 
-Repository for creating a hierarchical representation of entities, e.g. legal entities, meeting forums, projects, or similar.
+Skip to
+* [Installation](#installation)
+* [Development](#development)
+
+## Presentation
+In an organization using Microsoft SharePoint, you occationally need a visually pleasing way, and end user centric way, of presenting, and interacting with, information which is inherently hierarchical in nature. This can for example be how legal entities in a company relates to business units, how corporate governance forums are structured to support decision-making, how projects and sub projects belong to programs, etc. etc.
+
+As SharePoint has no built-in functionality for this, this solution was incrementally developed over several years to support Corporate Governance and Legal Structure requirements in [Vestas Wind Systems](https://www.vestas.com), and it is offered freely any other organization using the [MIT/X Consortium License](https://github.com/vestas-digital-employee-tools/business-governance/blob/main/LICENSE).
+
+The Project maintainers hopes that individuals and organizations will see fit to contribute back to the project through [raising issues](https://github.com/vestas-digital-employee-tools/business-governance/issues/new/choose) and [pull requests](https://github.com/vestas-digital-employee-tools/business-governance/compare), so that we can jointly improve the solution as time progresses.
+
+> [!IMPORTANT]
+> As a user of this solution ***you are always required to do your own due dilligence*** regarding if the solution, at any time, is fit for your purpose and to inspect the code base to ensure it meets your/your organizations requirements for Legal (i.e. GDPR), Information Security, supportability, general code quality and other requirements.
+
+The solution is a SharePoint Framework (SPFx) solution which, through no-code configuration, features
+* End user benefits
+  * Display entities (list items) as a hierarchy
+  * Collapse/expand groups of entities
+  * Display entities as cards  * 
+  * Modal display of individual entities
+  * Responsive UI design adapting to display sizes
+  * Use deep (external) linking to individual, or groups of, entities
+  * Search for entities using fast fuzzy text search
+  * Maintain people fields in entities using inline rich people picker control
+  * Have outbound links automatically rendered as active links
+* Administrator benefits
+  * Plug'n'play using only native SharePoint Online site features
+  * Automatically bootstrap entire solution on first run
+  * No-hassle upgrades through strict adhrence to [Semantic Versioning](https://semver.org/)
+  * Define data model using list Content Types
+  * Use lookup fields to reference between lists
+  * Use JSON to define visual representation of entities
+  * Set specific colors for different types of entities
+ 
+![Example screenshot of Business Governance solution frontpage](images/business_governance_-_screenshot_(small).png)
+
 
 ## Installation
 
