@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "ESNext",
+        "declaration": true,
+        "sourceMap": true,
+        "removeComments": false,
+        "types": [
+        ],
+        "noImplicitAny": false,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "pretty": true,
+        "stripInternal": true,
+        "skipLibCheck": true,
+        "outDir": "lib",
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "bin"
+    ],
+    "paths": {
+        "@/*": ["./src/*"]
+      }
+  }

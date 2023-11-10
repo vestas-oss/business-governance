@@ -1,0 +1,25 @@
+name: Build
+on: 
+  - pull_request
+  - workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies 🔧
+        run: npm ci
+
+      - name: Build and Package 📦
+        run: npm run build
+
+      - name: Run tests 🧪
+        run: npm test
+
