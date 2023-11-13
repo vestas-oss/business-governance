@@ -3,7 +3,7 @@ import { Entity } from "./types/Entity.js";
 import { EntityUser } from "./types/EntityUser.js";
 import { RoleItem } from "./types/items/RoleItem.js";
 import { SPFI } from "@pnp/sp";
-import { ConfigurationService } from "./ConfigurationService";
+import { ConfigurationService } from "./ConfigurationService.js";
 import "@pnp/sp/items/get-all.js";
 import "@pnp/sp/site-users/index.js";
 
