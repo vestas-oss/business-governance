@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { DetailsRow } from "../DetailsRow";
 import { ListView } from "./files/ListView";
+import { FileMenu } from "./files/FileMenu";
 dayjs.extend(utc);
 
 type Props = {
@@ -167,10 +168,31 @@ export const FilesRow = (props: Props) => {
                         if (!field) {
                             return null;
                         }
-                        if (item?.FieldValuesAsText) {
-                            return item?.FieldValuesAsText?.[field.InternalName];
+
+                        const getText = () => {
+                            if (item?.FieldValuesAsText) {
+                                return item?.FieldValuesAsText?.[field.InternalName];
+                            }
+
+                            return item[field.InternalName]?.toString();
+                        };
+
+                        if (
+                            field.InternalName === "FileLeafRef" &&
+                            !(
+                                item?.ContentTypeId?.indexOf("0x0120") === 0 ||
+                                item?.FSObjType === "1"
+                            )
+                        ) {
+                            return (
+                                <div className="flex flex-row justify-between">
+                                    <div className="truncate" title={getText()}>{getText()}</div>
+                                    <FileMenu fileRef={item.FileRef} />
+                                </div>
+                            );
                         }
-                        return item[field.InternalName]?.toString();
+
+                        return getText();
                     };
 
                     return {
