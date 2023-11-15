@@ -6,6 +6,7 @@
         "sourceMap": true,
         "removeComments": false,
         "types": [
+            "node"
         ],
         "noImplicitAny": false,
         "allowUnreachableCode": false,
