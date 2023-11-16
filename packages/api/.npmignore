@@ -1,0 +1,4 @@
+*.tgz
+src
+tsconfig.json
+lib/tests
