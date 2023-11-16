@@ -1,4 +1,4 @@
-import { BusinessGovernanceService } from "api";
+import { BusinessGovernanceService } from "@business-governance/api";
 import { createContext } from "react";
 
 type BusinessGovernance = BusinessGovernanceService | undefined;

@@ -1,5 +1,5 @@
 import { EntityDetailsLayout, EntityDetailsRow, EntityDetailsRowType, EntityLayout } from "@/contexts/EntityLayoutsContext";
-import { Configuration } from "api";
+import { Configuration } from "@business-governance/api";
 import { EntityLayoutItem } from "@/types/items/EntityLayoutItem";
 import { SPFI } from "@pnp/sp";
 
