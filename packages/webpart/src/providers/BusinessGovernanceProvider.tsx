@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BusinessGovernanceContext } from "@/contexts/BusinessGovernanceContext";
-import { BusinessGovernanceService } from "api";
+import { BusinessGovernanceService } from "@business-governance/api";
 import "@pnp/sp/items";
 import "@pnp/sp/lists";
 import "@pnp/sp/webs";

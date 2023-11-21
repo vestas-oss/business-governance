@@ -4,13 +4,13 @@ import { Bootstrap } from "@/components/lazy/Bootstrap";
 import { ConfigurationContext } from "@/contexts/ConfigurationContext";
 import { useProperties } from "@/hooks/useProperties";
 import { useSP } from "@/hooks/useSP";
-import { Configuration } from "api";
+import { Configuration } from "@business-governance/api";
 import "@pnp/sp/items";
 import "@pnp/sp/lists";
 import "@pnp/sp/webs";
 import { ReactNode, useMemo } from "react";
 import { useQuery } from "react-query";
-import { ConfigurationService } from "api";
+import { ConfigurationService } from "@business-governance/api";
 
 type Props = {
     children: ReactNode;
