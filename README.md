@@ -7,7 +7,7 @@ Skip to
 ## Presentation
 In an organization using Microsoft SharePoint, you occationally need a visually pleasing way, and end user centric way, of presenting, and interacting with, information which is inherently hierarchical in nature. This can for example be how legal entities in a company relates to business units, how corporate governance forums are structured to support decision-making, how projects and sub projects belong to programs, etc. etc.
 
-As SharePoint has no built-in functionality for this, this solution was incrementally developed over several years to support Corporate Governance and Legal Structure requirements in [Vestas Wind Systems](https://www.vestas.com), and it is offered freely any other organization using the [MIT/X Consortium License](https://github.com/vestas-digital-employee-tools/business-governance/blob/main/LICENSE).
+As SharePoint has no built-in functionality for this, this solution was incrementally developed over several years to support Corporate Governance and Legal Structure requirements in [Vestas Wind Systems](https://www.vestas.com), and it is offered freely to any other organization using the [MIT/X Consortium License](https://github.com/vestas-digital-employee-tools/business-governance/blob/main/LICENSE).
 
 The Project maintainers hopes that individuals and organizations will see fit to contribute back to the project through [raising issues](https://github.com/vestas-digital-employee-tools/business-governance/issues/new/choose) and [pull requests](https://github.com/vestas-digital-employee-tools/business-governance/compare), so that we can jointly improve the solution as time progresses.
 
