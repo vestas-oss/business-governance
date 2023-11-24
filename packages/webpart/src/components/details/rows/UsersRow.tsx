@@ -4,6 +4,7 @@ import { Entity } from "@/types/Entity";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { DetailsRow } from "../DetailsRow";
+import { useState } from "react";
 dayjs.extend(utc);
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 
 export const UsersRow = (props: Props) => {
     const { row, entity } = props;
+    const [expanded, setExpanded] = useState(false);
 
     const roleId = row.value;
 
@@ -22,9 +24,19 @@ export const UsersRow = (props: Props) => {
     }
     users = users.sort((a, b) => a.title.localeCompare(b.title));
     let more: JSX.Element = <></>;
-    if (users.length > 25) {
-        users = users.slice(0, 25);
-        more = <div>more...</div>;
+    const size = 25;
+    if (users.length > size && !expanded) {
+        users = users.slice(0, size);
+        more = (
+            <a
+                href="#"
+                onClick={(e) => {
+                    e.preventDefault();
+                    setExpanded(true);
+                }}>
+                more...
+            </a>
+        );
     }
     const elements = users.map((user, index) => {
         const username = user.userName.split("|")[2].split("@")[0].toUpperCase();

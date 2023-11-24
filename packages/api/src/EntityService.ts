@@ -117,7 +117,7 @@ export class EntityService {
             return item;
         };
 
-        const userService = new EntityUserService(this.sp);
+        const userService = new EntityUserService(this.sp, this.configurationPreset);
         const [item, users, contentTypeItem] = await Promise.all([
             getItem(),
             userService.getUsers(id),

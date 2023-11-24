@@ -59,6 +59,7 @@ export function ConfigurationProvider(props: Props) {
             };
 
             const presets = {
+                entityListTitle: properties?.entityListTitle,
                 select: properties?.select,
                 filter: selectFirst(searchParamsConfiguration.filter, properties?.filter),
                 search: selectFirst(searchParamsConfiguration.search, properties?.search),
