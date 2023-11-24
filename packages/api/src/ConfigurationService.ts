@@ -15,6 +15,10 @@ export class ConfigurationService {
         )();
 
         const getEntityList = async () => {
+            const title = this.configurationPreset?.entityListTitle;
+            if (title) {
+                return title;
+            }
             // Try to guess the list
             let lists = listInfos.filter((listInfo) => listInfo.ItemCount > 0);
 
@@ -23,7 +27,7 @@ export class ConfigurationService {
                     list.Title !== "EntityType" &&
                     list.Title !== "Configuration" &&
                     list.Title !== "Entity Layouts" &&
-                    list.Title !== "Meetings" && 
+                    list.Title !== "Meetings" &&
                     list.Title !== "Events" &&
                     list.Title !== "Roles" &&
                     list.Title !== "User Roles"
@@ -49,9 +53,8 @@ export class ConfigurationService {
                     l.Title === "EntityType" ||
                     l.Title === "EntityTypes"
             )?.Title,
-            entityEventsList: listInfos.find(
-                (l) => l.Title === "Meetings" || l.Title === "Events"
-            )?.Title,
+            entityEventsList: listInfos.find((l) => l.Title === "Meetings")?.Title ||
+                listInfos.find((l) => l.Title === "Events")?.Title,
             entityUserRolesList: listInfos.find((l) => l.Title === "Roles")?.Title,
             entityRolesList: listInfos.find((l) => l.Title === "MemberRoles")?.Title,
             filter: this.configurationPreset?.filter,
