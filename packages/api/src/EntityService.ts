@@ -29,9 +29,9 @@ export class EntityService {
 
     public async getEntities(): Promise<Array<EntityItem>>;
     public async getEntities(include?: Array<"events">): Promise<Array<EntityItem & { events: Array<Event> }>>;
-    public async getEntities(include?: Array<"users">): Promise<Array<EntityItem & { users: Array<EntityUser> }>>;
-    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users: Array<EntityUser> }>>;
-    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users: Array<EntityUser> }>> {
+    public async getEntities(include?: Array<"users">): Promise<Array<EntityItem & { users?: Array<EntityUser> }>>;
+    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users?: Array<EntityUser> }>>;
+    public async getEntities(include?: Array<"events" | "users">): Promise<Array<EntityItem & { events: Array<Event>, users?: Array<EntityUser> }>> {
         const configuration = await this.configurationService.getConfiguration();
         let selects = ["Id", "Title", "ContentTypeId", "ContentType/Name"];
         if (configuration?.parentColumn) {
@@ -62,11 +62,12 @@ export class EntityService {
                 if (!item.entityId) {
                     return;
                 }
+                let array = [item];
                 if (map.has(item.entityId)) {
-                    map.get(item.entityId)?.concat(item);
-                    return;
+                    array = map.get(item.entityId)!;
+                    array = array.concat(item);
                 }
-                map.set(item.entityId, [item]);
+                map.set(item.entityId, array);
             });
 
             return map;
