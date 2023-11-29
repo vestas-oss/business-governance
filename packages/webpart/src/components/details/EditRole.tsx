@@ -16,6 +16,7 @@ export function EditRole() {
     const [selectedUsers, setSelectedUsers] = useState<Array<IPersonaProps> | undefined>();
     const configuration = useConfiguration();
     const bg = useBusinessGovernance();
+    const [isSaving, setIsSaving] = useState(false);
 
     const role = useMemo(() => {
         if (view.view === "details") {
@@ -46,6 +47,8 @@ export function EditRole() {
             return;
         }
 
+        setIsSaving(true);
+
         const currentUsersSet = new Set(defaultSelectedUsers);
         const users = selectedUsers.map((u) => u.id!).filter((u) => u);
         const usersSet = new Set(users);
@@ -57,8 +60,9 @@ export function EditRole() {
         await bg.entityUserService.addUsers(entity, role, adds);
 
         // Reload users
-        entity.users =
-            (await bg.entityUserService.getUsers(entity.id)) || [];
+        entity.users = (await bg.entityUserService.getUsers(entity.id)) || [];
+
+        setIsSaving(false);
 
         setView({ view: "details" });
     }, [configuration, defaultSelectedUsers, entity, role, selectedUsers, setView]);
@@ -87,8 +91,8 @@ export function EditRole() {
             <div className="flex gap-2 justify-end">
                 <DefaultButton text="Cancel" onClick={() => setView({ view: "details" })} />
                 <PrimaryButton
-                    text="Save"
-                    disabled={selectedUsers === undefined}
+                    text={isSaving ? "Saving" : "Save"}
+                    disabled={isSaving || selectedUsers === undefined}
                     onClick={onSave}
                 />
             </div>
