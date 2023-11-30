@@ -1,10 +1,12 @@
 import * as React from "react";
 import { useEntityLayouts } from "@/hooks/useEntityLayouts";
 import { Icon, IconButton, Modal } from "@fluentui/react";
-import { useState } from "react";
+import { BooleanParam, useQueryParam, withDefault } from "use-query-params";
 
 export function Legend() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useQueryParam("legend", withDefault(BooleanParam, false), {
+        removeDefaultsFromUrl: true,
+    });
     const { layouts } = useEntityLayouts();
 
     if (!layouts || layouts.length === 0) {

@@ -3,7 +3,8 @@ import { useConfiguration } from "@/hooks/useConfiguration";
 import { useEntities } from "@/hooks/useEntities";
 import { SearchBox } from "@fluentui/react";
 import { Result, Results, create, insertMultiple, search } from "@orama/orama";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
+import { useQueryParam, StringParam, withDefault } from "use-query-params";
 
 type Props = {
     onResults?: (results: Results<Result[]> | undefined) => void;
@@ -17,6 +18,10 @@ export function Search(props: Props) {
     const [databaseReady, setDatabaseReady] = useState(false);
 
     const { isFetched, data: entities } = useEntities();
+
+    const [query, setQuery] = useQueryParam("q", withDefault(StringParam, ""), {
+        removeDefaultsFromUrl: true,
+    });
 
     const db = useMemo(async () => {
         return await create({
@@ -55,34 +60,37 @@ export function Search(props: Props) {
         }
     }, [configuration?.parentColumn, databasePopulated, db, entities, isFetched]);
 
-    const onSearch = useCallback(
-        async (query: string) => {
-            if (!databaseReady) {
-                return;
-            }
-            if (!query) {
-                onResults?.(undefined);
-                return;
-            }
+    useEffect(() => {
+        if (!databaseReady) {
+            // Note: could be from query string
+            onFocus();
+            return;
+        }
 
+        if (!query) {
+            onResults?.(undefined);
+            return;
+        }
+
+        (async () => {
             const results = await search(await db, {
                 term: query,
                 properties: ["title"],
                 limit: 5000,
             });
             onResults?.(results);
-        },
-        [databaseReady, db, onResults]
-    );
+        })();
+    }, [query, databaseReady, db, onResults]);
 
     return (
         <SearchBox
             placeholder={`Search ${configuration?.entityListTitle || ""}`}
             className="w-56"
             underlined={true}
+            defaultValue={query}
             onFocus={onFocus}
-            onSearch={onSearch}
-            onClear={() => onResults?.(undefined)}
+            onSearch={setQuery}
+            onClear={() => setQuery("")}
         />
     );
 }

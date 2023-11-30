@@ -5,6 +5,8 @@ import { ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ReadMode } from "./ReadMode";
 import { ErrorBoundary } from "./errors/ErrorBoundary";
+import { QueryParamProvider } from "use-query-params";
+import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
 type Props = {
     details: (id: string, onDismiss?: () => void) => ReactNode;
@@ -25,19 +27,24 @@ export function BusinessGovernance(props: Props) {
                 properties?.parentColName,
             ]}>
             <HashRouter basename="/">
-                <Routes>
-                    <Route path="/" element={<ReadMode details={props.details} />} />
-                    <Route path="/focus/:focus" element={<ReadMode details={props.details} />} />
-                    <Route
-                        path="/selected/:selected"
-                        element={<ReadMode details={props.details} />}
-                    />
-                    <Route
-                        path="/focus/:focus/selected/:selected"
-                        element={<ReadMode details={props.details} />}
-                    />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <QueryParamProvider adapter={ReactRouter6Adapter}>
+                    <Routes>
+                        <Route path="/" element={<ReadMode details={props.details} />} />
+                        <Route
+                            path="/focus/:focus"
+                            element={<ReadMode details={props.details} />}
+                        />
+                        <Route
+                            path="/selected/:selected"
+                            element={<ReadMode details={props.details} />}
+                        />
+                        <Route
+                            path="/focus/:focus/selected/:selected"
+                            element={<ReadMode details={props.details} />}
+                        />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </QueryParamProvider>
             </HashRouter>
         </ErrorBoundary>
     );
