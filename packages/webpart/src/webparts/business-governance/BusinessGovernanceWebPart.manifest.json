@@ -24,7 +24,8 @@
     "properties": {
       "legend": true,
       "search": true,
-      "group": true
+      "group": true,
+      "startNode": ""
     }
   }]
 }
