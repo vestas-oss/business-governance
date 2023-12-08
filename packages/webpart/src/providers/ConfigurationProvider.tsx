@@ -40,8 +40,8 @@ export function ConfigurationProvider(props: Props) {
         }
 
         if (urlSearchParams.has("search")) {
-            const startNode = urlSearchParams.get("search");
-            searchParamsConfiguration.search = startNode === "true";
+            const search = urlSearchParams.get("search");
+            searchParamsConfiguration.search = search === "true";
         }
 
         return searchParamsConfiguration;
