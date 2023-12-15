@@ -6,10 +6,11 @@ import { Node } from "./Tree";
 
 type Props = Node & {
     expanded?: boolean;
+    titleClassName?: string;
 };
 
 export function TreeNode(props: Props) {
-    const { title, color, icon, children, expanded, onClick, onExpand } = props;
+    const { title, color, icon, children, expanded, onClick, onExpand, titleClassName } = props;
 
     const onExpandCallback = useCallback(
         (e) => {
@@ -33,7 +34,7 @@ export function TreeNode(props: Props) {
             title={title}
             onClick={onClick}>
             <Icon iconName={icon} className="text-lg" />
-            <span className="truncate">{title}</span>
+            {titleClassName ? <span className={titleClassName}>{title}</span> : <span className="truncate">{title}</span>}
             {children !== undefined && children > 0 ? (
                 <div
                     className={clsx(

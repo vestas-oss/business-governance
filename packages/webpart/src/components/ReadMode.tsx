@@ -295,7 +295,13 @@ export function ReadMode(props: Props) {
                     <SearchResults results={results} />
                 ) : (
                     <>
-                        <Tree path={path} groups={groups} />
+                        <Tree
+                            path={path}
+                            groups={groups}
+                            nodeTitleClassName={
+                                properties.multilineTitles ? "line-clamp-2" : "truncate"
+                            }
+                        />
                         {selected ? details(selected, onDismissCallback) : null}
                     </>
                 )}

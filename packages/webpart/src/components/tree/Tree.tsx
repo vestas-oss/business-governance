@@ -22,10 +22,11 @@ export type Group = {
 type Props = {
     path?: Array<Node>;
     groups: Array<Group>;
+    nodeTitleClassName?: string;
 };
 
 export function Tree(props: Props) {
-    const { path } = props;
+    const { path, nodeTitleClassName } = props;
 
     const hasChildren = props.groups.length > 0;
 
@@ -33,7 +34,7 @@ export function Tree(props: Props) {
         const isLast = index === path.length - 1;
         return (
             <div key={`path-${index}`} className="flex items-center flex-col">
-                <TreeNode {...node} expanded={true} />
+                <TreeNode {...node} expanded={true} titleClassName={nodeTitleClassName} />
                 {!isLast || (isLast && hasChildren) ? <VerticalLine /> : null}
             </div>
         );
@@ -46,7 +47,7 @@ export function Tree(props: Props) {
         <div className="text-sm text-white w-full">
             <div className="flex items-center flex-col">
                 {pathElements}
-                {singleNode && <TreeNode {...groups[0].nodes[0]} />}
+                {singleNode && <TreeNode {...groups[0].nodes[0]} titleClassName={nodeTitleClassName} />}
             </div>
             {groups?.length > 0 && !singleNode && (
                 <>
@@ -66,7 +67,7 @@ export function Tree(props: Props) {
                                             "flex flex-row gap-3 flex-wrap justify-center"
                                         )}>
                                         {nodes?.map((node, index) => (
-                                            <TreeNode key={`node-${index}`} {...node} />
+                                            <TreeNode key={`node-${index}`} {...node} titleClassName={nodeTitleClassName} />
                                         ))}
                                     </div>
                                 </div>
