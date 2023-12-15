@@ -6,6 +6,7 @@ export type Properties = {
     group?: boolean;
     legend?: boolean;
     search?: boolean;
+    multilineTitles?: boolean;
     // TODO: rename to parentColumn ?
     parentColName?: string;
 }

@@ -15,6 +15,7 @@ export function EditMode() {
     const [group, setGroup] = useState(properties?.group);
     const [legend, setLegend] = useState(properties?.legend);
     const [search, setSearch] = useState(properties?.search);
+    const [multilineTitles, setMultilineTitles] = useState(properties?.multilineTitles);
     const [parentColumnName, setParentColumnName] = useState(properties?.parentColName);
 
     useEffect(() => {
@@ -44,6 +45,10 @@ export function EditMode() {
     useEffect(() => {
         setProperties?.({ search });
     }, [search, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ multilineTitles });
+    }, [multilineTitles, setProperties]);
 
     useEffect(() => {
         setProperties?.({ parentColName: parentColumnName });
@@ -108,6 +113,15 @@ export function EditMode() {
                                 offText="Off"
                                 onChange={(e, value) => {
                                     setSearch(value);
+                                }}
+                            />
+                            <Toggle
+                                label="Multiline titles"
+                                defaultChecked={multilineTitles}
+                                onText="On"
+                                offText="Off"
+                                onChange={(e, value) => {
+                                    setMultilineTitles(value);
                                 }}
                             />
                         </div>
