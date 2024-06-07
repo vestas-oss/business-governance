@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { HorizontalLine } from "./HorizontalLine";
 import { TreeNode } from "./TreeNode";
 import { VerticalLine } from "./VerticalLine";
+import { useProperties } from "@/hooks/useProperties";
 
 export type Node = {
     title: string;
@@ -27,6 +28,7 @@ type Props = {
 
 export function Tree(props: Props) {
     const { path, nodeTitleClassName } = props;
+    const properties = useProperties();
 
     const hasChildren = props.groups.length > 0;
 
@@ -58,7 +60,7 @@ export function Tree(props: Props) {
                             return (
                                 <div key={`group-${index}`}>
                                     {group.title ? (
-                                        <div className={"text-slate-500 text-xs pb-1"}>
+                                        <div className={`text-slate-500 text-${properties.groupTitleTextSize ?? "xs"} pb-1`}>
                                             {group.title}:
                                         </div>
                                     ) : null}

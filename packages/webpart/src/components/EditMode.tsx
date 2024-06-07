@@ -2,7 +2,15 @@ import * as React from "react";
 import { Bootstrap } from "@/components/lazy/Bootstrap";
 import { useProperties } from "@/hooks/useProperties";
 import { useSetProperties } from "@/hooks/useSetProperties";
-import { Pivot, PivotItem, Separator, TextField, Toggle } from "@fluentui/react";
+import {
+    Dropdown,
+    IDropdownOption,
+    Pivot,
+    PivotItem,
+    Separator,
+    TextField,
+    Toggle,
+} from "@fluentui/react";
 import { useEffect, useState } from "react";
 
 export function EditMode() {
@@ -17,6 +25,7 @@ export function EditMode() {
     const [search, setSearch] = useState(properties?.search);
     const [multilineTitles, setMultilineTitles] = useState(properties?.multilineTitles);
     const [parentColumnName, setParentColumnName] = useState(properties?.parentColName);
+    const [groupTitleTextSize, setGroupTitleTextSize] = useState(properties?.groupTitleTextSize);
 
     useEffect(() => {
         setProperties?.({ entityListTitle: list });
@@ -53,6 +62,10 @@ export function EditMode() {
     useEffect(() => {
         setProperties?.({ parentColName: parentColumnName });
     }, [parentColumnName, setProperties]);
+
+    useEffect(() => {
+        setProperties?.({ groupTitleTextSize });
+    }, [groupTitleTextSize, setProperties]);
 
     return (
         <>
@@ -123,6 +136,20 @@ export function EditMode() {
                                 onChange={(e, value) => {
                                     setMultilineTitles(value);
                                 }}
+                            />
+                            <Dropdown
+                                label="Group title text size"
+                                selectedKey={groupTitleTextSize ?? "xs"}
+                                onChange={(_, item: IDropdownOption<string>) => {
+                                    setGroupTitleTextSize(item.key.toString());
+                                }}
+                                placeholder="Select an option"
+                                options={[
+                                    { key: "xs", text: "Extra Small" },
+                                    { key: "sm", text: "Small" },
+                                    { key: "base", text: "Normal" },
+                                    { key: "lg", text: "Large" },
+                                ]}
                             />
                         </div>
                     </PivotItem>

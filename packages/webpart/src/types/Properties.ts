@@ -9,4 +9,5 @@ export type Properties = {
     multilineTitles?: boolean;
     // TODO: rename to parentColumn ?
     parentColName?: string;
+    groupTitleTextSize?: string;
 }
