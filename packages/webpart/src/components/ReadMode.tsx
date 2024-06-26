@@ -24,7 +24,7 @@ export function ReadMode(props: Props) {
     const { focus, selected: selectedRaw } = useParams();
     const selected = useMemo(() => {
         const ampersandIndex = selectedRaw?.indexOf("&");
-        if (!ampersandIndex) {
+        if (!ampersandIndex || ampersandIndex === -1) {
             return selectedRaw;
         }
         return selectedRaw.substring(0, ampersandIndex);
