@@ -12,13 +12,23 @@ export class EntityEventService {
         this.configurationService = new ConfigurationService(sp, configurationPreset);
     }
 
-    public getEntityEvents = async (entityId?: number): Promise<Array<Event> | undefined> => {
+    public getEntityEvents = async (filter?: number | { entityId?: number, from?: Date, to?: Date }): Promise<Array<Event> | undefined> => {
+        let entityId: number | undefined = undefined;
+        let from: Date = new Date();
+        let to: Date | undefined = undefined;
+        if (typeof filter === "number") {
+            entityId = filter;
+        } else {
+            entityId = filter?.entityId;
+            from = filter?.from ?? from;
+            to = filter?.to;
+        }
+
         const configuration = await this.configurationService.getConfiguration();
 
         if (!configuration.entityEventsList) {
             return undefined;
         }
-        const now = new Date().toISOString();
 
         try {
             const list = this.sp.web.lists.getByTitle(configuration.entityEventsList);
@@ -33,14 +43,28 @@ export class EntityEventService {
             const endFieldInfo = fields.find(f => f.InternalName === "EndDate" || f.InternalName === "End");
             const endField = endFieldInfo?.InternalName || "End";
 
-            var items: Array<any>;
-            if (!entityId) {
-                const filter = `${startField} ge datetime'${now}'`;
-                items = await list.items.filter(filter).orderBy(startField, true)();
-            } else {
-                const filter = `${entityField} eq ${entityId} and ${startField} ge datetime'${now}'`;
-                items = await list.items.filter(filter).orderBy(startField, true)();
+            const isoString = (date: Date) => date.toISOString().split(".").shift() + "Z";
+            const filters = new Array<string>();
+            if (entityId) {
+                filters.push(`${entityField} eq ${entityId}`);
             }
+            if (from && to) {
+                // Starts or ends within period
+                const start = `(${startField} ge datetime'${isoString(from)}' and ${startField} le datetime'${isoString(to)}')`;
+                const end = `(${endField} ge datetime'${isoString(from)}' and ${endField} le datetime'${isoString(to)}')`;
+                filters.push(`(${start} or ${end})`);
+            } else if (to) {
+                // Start or end before to
+                filters.push(`(${startField} le datetime'${isoString(to)}' or ${endField} le datetime'${isoString(to)}')`);
+            } else if (from) {
+                // Start or end after from
+                filters.push(`(${startField} ge datetime'${isoString(from)}' or ${endField} ge datetime'${isoString(from)}')`);
+            }
+
+            const items = await list.items.
+                top(5000).
+                filter(filters.join(" and ")).
+                orderBy(startField, true)();
 
             return items.map(item => {
                 const event = {

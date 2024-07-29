@@ -4,8 +4,8 @@ import { EntityUser } from "./types/EntityUser.js";
 import { RoleItem } from "./types/items/RoleItem.js";
 import { SPFI } from "@pnp/sp";
 import { ConfigurationService } from "./ConfigurationService.js";
-import "@pnp/sp/items/get-all.js";
 import "@pnp/sp/site-users/index.js";
+import { IItems } from "@pnp/sp/items/index.js";
 
 export class EntityUserService {
     private readonly configurationService: ConfigurationService;
@@ -77,14 +77,21 @@ export class EntityUserService {
                 select(...selects).
                 orderBy(order);
 
+            const getAll = async (items: IItems) => {
+                let array = new Array();
+                for await (const page of items) {
+                    array = array.concat(page);
+                }
+                return array;
+            };
+
             let userItems: Array<any>;
             if (!entityId) {
                 // Get all users
-                userItems = await items.getAll();
+                userItems = await getAll(items);
             } else {
-                userItems = await items.
-                    filter(`${entityField}/Id eq ${entityId}`).
-                    getAll();
+                userItems = await getAll(items.
+                    filter(`${entityField}/Id eq ${entityId}`));
             }
             const users = userItems.map(m => new EntityUser(m));
 
@@ -143,7 +150,7 @@ export class EntityUserService {
                 const itemProperties = {
                     RoleId: role.Id,
                 } as any;
-                itemProperties[`${userField}Id`] = user.data.Id;
+                itemProperties[`${userField}Id`] = user.Id;
                 itemProperties[`${entityField}Id`] = entity.id;
 
                 await list.items.add(itemProperties);

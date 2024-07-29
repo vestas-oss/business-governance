@@ -8,6 +8,7 @@ node_modules
 
 # Build generated files
 lib
+*.tgz
 
 # Coverage directory used by tools like istanbul
 coverage

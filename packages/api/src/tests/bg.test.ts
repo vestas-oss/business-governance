@@ -1,12 +1,13 @@
 import { SPFx, spfi } from "@pnp/sp";
 import { setupServer } from 'msw/node';
 import * as assert from "node:assert";
-import test from "node:test";
+import { describe, test } from "node:test";
 import { handlers } from 'msw-sp';
 import { EntityService } from "../EntityService.js";
 import { ConfigurationService } from "../ConfigurationService.js";
+import { EntityEventService } from "../EntityEventService.js";
 
-void test('web', async (t) => {
+void describe('business-governance', async () => {
     const url = "https://tenant.sharepoint.com";
     const server = setupServer(...handlers({
         title: "tenant",
@@ -69,9 +70,27 @@ void test('web', async (t) => {
                                     Modified: new Date(),
                                     EditorId: 1,
                                 },
-                            ]
-                        }
-                    ]
+                            ],
+                        },
+                        {
+                            title: "Events",
+                            url: "lists/events",
+                            id: "4dd59dd8-2005-45f8-9d1c-41b966e31672",
+                            baseTemplate: 106,
+                            hidden: false,
+                            items: [
+                                {
+                                    Id: 1,
+                                    Title: "Event",
+                                    EntityId: 1,
+                                    Start: new Date(new Date().getTime() + 3600000).toISOString(),
+                                    End: new Date(new Date().getTime() + 3600000 * 2).toISOString()
+                                }
+                            ],
+                            fields: [
+                            ],
+                        },
+                    ],
                 },
             },
         },
@@ -92,7 +111,7 @@ void test('web', async (t) => {
         };
     };
 
-    await t.test("bg", async () => {
+    await test("getEntities", async () => {
         const sp = spfi().using(SPFx(getContext("/sites/bg")));
 
         const configurationService = new ConfigurationService(sp);
@@ -107,5 +126,41 @@ void test('web', async (t) => {
         assert.ok(entity1);
         assert.ok(entity2);
         assert.equal(entity2[`${configuration.parentColumn}Id`], entity1.Id);
+    });
+
+    await test("getEntityEvents", async () => {
+        const sp = spfi().using(SPFx(getContext("/sites/bg")));
+
+        const entityService = new EntityEventService(sp);
+        const events = await entityService.getEntityEvents();
+
+        assert.ok(events)
+        assert.equal(events.length, 1);
+        const event = events.find(e => e.title === "Event");
+        assert.ok(event);
+        assert.ok(new Date(event.start) > new Date());
+        assert.ok(new Date(event.end) > new Date(event.start));
+    });
+
+    await test("getEntityEvents from, to", async () => {
+        const sp = spfi().using(SPFx(getContext("/sites/bg")));
+
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        const nextDay = new Date(tomorrow.getTime() + 24 * 60 * 60 * 1000);
+        const entityService = new EntityEventService(sp);
+
+        let events = await entityService.getEntityEvents({ from: now });
+        assert.ok(events)
+        assert.equal(events.length, 1);
+
+        events = await entityService.getEntityEvents({ from: today, to: tomorrow });
+        assert.ok(events)
+        assert.equal(events.length, 1);
+
+        events = await entityService.getEntityEvents({ from: tomorrow, to: nextDay });
+        assert.ok(events)
+        assert.equal(events.length, 0);
     });
 });
