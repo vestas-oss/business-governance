@@ -6,6 +6,8 @@ import { handlers } from 'msw-sp';
 import { EntityService } from "../EntityService.js";
 import { ConfigurationService } from "../ConfigurationService.js";
 import { EntityEventService } from "../EntityEventService.js";
+import { EntityLayoutService } from "../EntityLayoutService.js";
+import { EntityLayoutItem } from "../types/items/EntityLayoutItem.js";
 
 void describe('business-governance', async () => {
     const url = "https://tenant.sharepoint.com";
@@ -58,7 +60,6 @@ void describe('business-governance', async () => {
                                     ContentTypeId: "0x0100432290886DFF294EA373EEC55DD64049",
                                     Id: 1,
                                     Title: "Entity #1",
-                                    Latin: "Sol",
                                     Modified: new Date(),
                                     EditorId: 1,
                                 },
@@ -89,6 +90,22 @@ void describe('business-governance', async () => {
                             ],
                             fields: [
                             ],
+                        },
+                        {
+                            title: "Entity Layouts",
+                            url: "lists/entity-layouts",
+                            id: "d99408a7-4032-4ebf-83e4-28ecdfc9eee9",
+                            baseTemplate: 100,
+                            hidden: false,
+                            items: [
+                                {
+                                    Id: 1,
+                                    Title: "Layout #1",
+                                    Layout: "[]",
+                                    bgContentTypeId: "0x0100432290886DFF294EA373EEC55DD64049",
+                                    Color: "#00FF00",
+                                }
+                            ] as Array<EntityLayoutItem>
                         },
                     ],
                 },
@@ -162,5 +179,38 @@ void describe('business-governance', async () => {
         events = await entityService.getEntityEvents({ from: tomorrow, to: nextDay });
         assert.ok(events)
         assert.equal(events.length, 0);
+    });
+
+    await test("getLayouts", async () => {
+        const sp = spfi().using(SPFx(getContext("/sites/bg")));
+
+        const entityLayoutService = new EntityLayoutService(sp);
+        const layouts = await entityLayoutService.getLayouts();
+
+        assert.ok(layouts);
+        assert.equal(layouts.length, 1);
+
+        const layout = layouts[0];
+        assert.equal(layout.title, "Layout #1");
+    });
+
+    await test("getLayout", async () => {
+        // Arrange
+        const sp = spfi().using(SPFx(getContext("/sites/bg")));
+
+        const entityService = new EntityService(sp);
+        const entities = await entityService.getEntities();
+        const entity = entities.find(e => e.Id === 1);
+
+        const entityLayoutService = new EntityLayoutService(sp);
+        const layouts = await entityLayoutService.getLayouts();
+
+        // Act
+        const layout = entityLayoutService.getLayout(entity, layouts);
+
+        // Assert
+        assert.ok(layout);
+        assert.equal(layout.title, "Layout #1");
+        assert.equal(layout.color, "#00FF00");
     });
 });
