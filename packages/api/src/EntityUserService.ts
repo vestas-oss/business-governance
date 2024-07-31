@@ -108,19 +108,22 @@ export class EntityUserService {
             return;
         }
         for (let i = 0; i !== users.length; i++) {
-            const user = entity.users?.find(
+            const removeUsers = entity.users?.filter(
                 (user) =>
                     user.roleId === ("RoleId" in role ? role.RoleId.toString() : role.KeyId.toString()) &&
-                    user.name === users[i]
+                    user.name === users[i] &&
+                    !user.isDeleted
             );
-            if (!user) {
+            if (!removeUsers || removeUsers.length === 0) {
                 continue;
             }
             // Mark as deleted
-            await this.sp.web.lists
-                .getByTitle(configuration.entityUserRolesList)
-                .items.getById(user.id)
-                .update({ isDeleted: true });
+            for (const removeUser of removeUsers) {
+                await this.sp.web.lists
+                    .getByTitle(configuration.entityUserRolesList)
+                    .items.getById(removeUser.id)
+                    .update({ isDeleted: true });
+            }
         }
     }
 
@@ -139,6 +142,8 @@ export class EntityUserService {
         const userField = userFieldInfo?.InternalName || "User";
 
         for (let i = 0; i !== users.length; i++) {
+            // NOTE: there can exist duplicate users (eg. when two users added the same users
+            // at the same time).
             const user = entity.users?.find(
                 (user) =>
                     user.roleId === ("RoleId" in role ? role.RoleId.toString() : role.KeyId.toString()) &&
