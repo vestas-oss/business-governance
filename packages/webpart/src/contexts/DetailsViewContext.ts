@@ -1,5 +1,4 @@
-import { Entity } from "@/types/Entity";
-import { RoleItem } from "@/types/items/RoleItem";
+import { RoleItem, Entity } from "@business-governance/api";
 import { createContext } from "react";
 
 export type DetailsView = { view: "details" } | { view: "role", role: RoleItem };

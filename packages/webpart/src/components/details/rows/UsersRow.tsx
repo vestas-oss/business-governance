@@ -1,6 +1,6 @@
 import * as React from "react";
 import { EntityDetailsRow } from "@/contexts/EntityLayoutsContext";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { DetailsRow } from "../DetailsRow";

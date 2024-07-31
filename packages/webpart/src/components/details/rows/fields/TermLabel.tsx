@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { useEffect, useState } from "react";
 import { useBusinessGovernance } from "@/hooks/useBusinessGovernance";
 

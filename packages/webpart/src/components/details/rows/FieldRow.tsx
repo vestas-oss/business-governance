@@ -1,6 +1,6 @@
 import * as React from "react";
 import { EntityDetailsRow } from "@/contexts/EntityLayoutsContext";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { IFieldInfo } from "@pnp/sp/fields";
 import { AddMultilineTextProps } from "@pnp/sp/fields/types";
 import { useMemo } from "react";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { useId } from "@fluentui/react-hooks";
 
 type Props =

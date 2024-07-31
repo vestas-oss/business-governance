@@ -1,6 +1,6 @@
 import * as React from "react";
 import { CloseButton } from "@/components/buttons/CloseButton";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { ReactNode } from "react";
 import { LastModified } from "./LastModified";
 

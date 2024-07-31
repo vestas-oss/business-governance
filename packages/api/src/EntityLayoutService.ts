@@ -1,7 +1,55 @@
-import { EntityDetailsLayout, EntityDetailsRow, EntityDetailsRowType, EntityLayout } from "@/contexts/EntityLayoutsContext";
-import { Configuration } from "@business-governance/api";
-import { EntityLayoutItem } from "@/types/items/EntityLayoutItem";
 import { SPFI } from "@pnp/sp";
+import { ConfigurationService } from "./ConfigurationService.js";
+import { EntityLayoutItem } from "./types/items/EntityLayoutItem.js";
+import { evalExpression } from "sp-formatting";
+import { type Configuration } from "./Configuration.js";
+
+export type EntityDetailsLayout = {
+    header: Array<EntityDetailsHeader>;
+    sections: Array<EntityDetailsSection>;
+}
+
+export type EntityDetailsSection = {
+    title: string;
+    rows: Array<EntityDetailsRow>;
+}
+
+export type EntityDetailsHeader = {
+    title: string;
+}
+
+export type FilesEntityDetailsRow = {
+    title: string;
+    description?: string;
+    type: "Files";
+    value: string;
+    fields?: Array<string>;
+};
+
+export type EntityDetailsRow = {
+    title: string;
+    description?: string;
+    type: "MembersProvider" | "MeetingInfo" | "DetailsProvider";
+    // TODO: rename?
+    value: string;
+} | FilesEntityDetailsRow;
+
+export type EntityDetailsRowType = "MembersProvider" | "MeetingInfo" | "Files" | "DetailsProvider";
+
+export type EntityLayout = {
+    icon: string;
+    color: string;
+    contentType?: string;
+    condition?: string;
+
+    id: number;
+    plural?: string;
+    title: string;
+    order?: number;
+    description?: string;
+
+    layout?: EntityDetailsLayout;
+}
 
 export type EntityLayoutSchema = {
     field: string;
@@ -15,14 +63,22 @@ export type EntityLayoutSchema = {
     type: "HeaderItalic" | "Section";
 }
 
-export const EntityLayoutService = {
-    getLayouts: async (sp: SPFI, configuration?: Configuration): Promise<Array<EntityLayout>> => {
+export class EntityLayoutService {
+    private readonly configurationService: ConfigurationService;
+
+    constructor(private readonly sp: SPFI, configurationPreset?: Configuration) {
+        this.configurationService = new ConfigurationService(sp, configurationPreset);
+    }
+
+    public getLayouts = async (): Promise<Array<EntityLayout>> => {
+        const configuration = await this.configurationService.getConfiguration();
+
         if (!configuration?.entityLayoutListTitle) {
             return [];
         }
 
         // Get layouts
-        const items = sp.web.lists.getByTitle(configuration.entityLayoutListTitle).items;
+        const items = this.sp.web.lists.getByTitle(configuration.entityLayoutListTitle).items;
         const layoutItems = await items.orderBy("bgOrder")() as Array<EntityLayoutItem>;
 
         const entityLayouts = new Array<EntityLayout>();
@@ -96,5 +152,36 @@ export const EntityLayoutService = {
         }
 
         return entityLayouts;
+    }
+
+    public getLayout = (entity: any, layouts: Array<EntityLayout>) => {
+        if (!layouts) {
+            return undefined;
+        }
+        return layouts?.find((layout) => {
+            // Check content type condition
+            const contentType = layout.contentType;
+            if (
+                contentType &&
+                (entity.ContentTypeId.indexOf(contentType) === 0 ||
+                    entity.ContentType === contentType)
+            ) {
+                return true;
+            }
+
+            // Check custom condition
+            let condition = layout.condition;
+            if (condition) {
+                if (condition.indexOf("=") !== 0) {
+                    condition = `=${condition}`;
+                }
+
+                if (evalExpression(condition, { item: entity }) === "true") {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     }
 };

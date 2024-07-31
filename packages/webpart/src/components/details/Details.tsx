@@ -3,7 +3,7 @@ import { EntityLayout } from "@/contexts/EntityLayoutsContext";
 import { useConfiguration } from "@/hooks/useConfiguration";
 import { useDetailsView } from "@/hooks/useDetailsView";
 import { useEntityLayouts } from "@/hooks/useEntityLayouts";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { Icon, Modal } from "@fluentui/react";
 import "@pnp/sp/regional-settings/web";
 import "@pnp/sp/site-users/web";
