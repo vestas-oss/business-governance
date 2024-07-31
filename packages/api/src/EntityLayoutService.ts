@@ -155,7 +155,7 @@ export class EntityLayoutService {
     }
 
     public getLayout = (entity: any, layouts: Array<EntityLayout>) => {
-        if (!layouts) {
+        if (!layouts || !entity) {
             return undefined;
         }
         return layouts?.find((layout) => {
