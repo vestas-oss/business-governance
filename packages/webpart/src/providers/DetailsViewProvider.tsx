@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DetailsView, DetailsViewContext } from "@/contexts/DetailsViewContext";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { ReactNode, useState } from "react";
 
 type Props = {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FilesEntityDetailsRow } from "@/contexts/EntityLayoutsContext";
 import { useSP } from "@/hooks/useSP";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import { Breadcrumb, IBreadcrumbItem } from "@fluentui/react";
 import { isUrlAbsolute } from "@pnp/core";
 import "@pnp/sp/folders";

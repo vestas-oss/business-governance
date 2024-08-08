@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useSP } from "@/hooks/useSP";
-import { EntityLayoutSchema } from "@/services/EntityLayoutService";
-import { Services } from "@/services/Services";
+import { EntityLayoutSchema } from "@business-governance/api";
+import { ImportService } from "../services/ImportService";
 import { PrimaryButton, Spinner, SpinnerSize } from "@fluentui/react";
 import "@pnp/sp/content-types";
 import { PermissionKind } from "@pnp/sp/security";
@@ -25,7 +25,7 @@ export function Bootstrap() {
         (async () => {
             const currentUserInfo = await sp.web.currentUser();
 
-            await Services.importService.import(sp, {
+            await ImportService.import(sp, {
                 title: "Entities",
                 items: [
                     {
@@ -55,7 +55,7 @@ export function Bootstrap() {
                 ],
             });
 
-            await Services.importService.import(sp, {
+            await ImportService.import(sp, {
                 title: "Roles",
                 fields: [
                     {
@@ -89,7 +89,7 @@ export function Bootstrap() {
             const rolesList = sp.web.lists.getByTitle("Roles");
             const rolesListInfo = await rolesList();
 
-            await Services.importService.import(sp, {
+            await ImportService.import(sp, {
                 title: "User Roles",
                 fields: [
                     {
@@ -150,7 +150,7 @@ export function Bootstrap() {
                 },
             ];
 
-            await Services.importService.import(sp, {
+            await ImportService.import(sp, {
                 title: "Entity Layouts",
                 fields: [
                     {
@@ -201,7 +201,7 @@ export function Bootstrap() {
             // Add Entity lookup to Events (if exists)
             const listInfos = await sp.web.lists();
             if (listInfos.find((l) => l.Title === "Events")) {
-                await Services.importService.import(sp, {
+                await ImportService.import(sp, {
                     title: "Events",
                     fields: [
                         {

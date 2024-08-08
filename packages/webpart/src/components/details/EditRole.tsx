@@ -2,7 +2,7 @@ import * as React from "react";
 import { useConfiguration } from "@/hooks/useConfiguration";
 import { useDetailsView } from "@/hooks/useDetailsView";
 import { useSP } from "@/hooks/useSP";
-import { RoleItem } from "@/types/items/RoleItem";
+import { RoleItem } from "@business-governance/api";
 import { DefaultButton, IPersonaProps, PrimaryButton } from "@fluentui/react";
 import "@pnp/sp/site-users/web";
 import "@pnp/sp/webs";

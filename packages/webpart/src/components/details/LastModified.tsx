@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSP } from "@/hooks/useSP";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import "@pnp/sp/site-users/web";
 import "@pnp/sp/webs";
 import { useMemo } from "react";

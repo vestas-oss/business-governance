@@ -20,7 +20,7 @@
         "@microsoft/sp-property-pane": "1.18.0",
         "@microsoft/sp-webpart-base": "1.18.0",
         "@orama/orama": "1.2.4",
-        "@pnp/sp": "^3.14.0",
+        "@pnp/sp": "^4.2.0",
         "clsx": "^2.0.0",
         "dayjs": "^1.10.5",
         "react": "17.0.1",
@@ -28,7 +28,6 @@
         "react-error-boundary": "^4.0.10",
         "react-query": "^3.39.3",
         "react-router-dom": "^6.14.1",
-        "sp-formatting": "^1.0.0",
         "use-query-params": "^2.2.1"
     },
     "devDependencies": {

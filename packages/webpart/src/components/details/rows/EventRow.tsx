@@ -1,7 +1,7 @@
 import * as React from "react";
 import { EntityDetailsRow } from "@/contexts/EntityLayoutsContext";
 import { useSP } from "@/hooks/useSP";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "react-query";

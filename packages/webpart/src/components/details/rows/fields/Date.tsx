@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Entity } from "@/types/Entity";
+import { Entity } from "@business-governance/api";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 dayjs.extend(localizedFormat);

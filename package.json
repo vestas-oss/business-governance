@@ -2,6 +2,7 @@
     "private": true,
     "scripts": {
       "build": "turbo run build",
+      "build-force": "turbo run build --force",
       "dev": "turbo run dev",
       "lint": "turbo run lint",
       "test": "turbo run test",
