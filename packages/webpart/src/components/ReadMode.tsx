@@ -21,7 +21,14 @@ type Props = {
 };
 
 export function ReadMode(props: Props) {
-    const { focus, selected } = useParams();
+    const { focus, selected: selectedRaw } = useParams();
+    const selected = useMemo(() => {
+        const ampersandIndex = selectedRaw?.indexOf("&");
+        if (!ampersandIndex || ampersandIndex === -1) {
+            return selectedRaw;
+        }
+        return selectedRaw.substring(0, ampersandIndex);
+    }, [selectedRaw]);
     const { details } = props;
     const { isLoading, error, data: entities } = useEntities();
     const configuration = useConfiguration();
