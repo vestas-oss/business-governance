@@ -43,6 +43,8 @@ export class EntityEventService {
             const endFieldInfo = fields.find(f => f.InternalName === "EndDate" || f.InternalName === "End");
             const endField = endFieldInfo?.InternalName || "End";
 
+            const allDayField = fields.find(f => f.InternalName.toLowerCase().indexOf("allday") > -1);
+
             const isoString = (date: Date) => date.toISOString().split(".").shift() + "Z";
             const filters = new Array<string>();
             if (entityId) {
@@ -72,6 +74,7 @@ export class EntityEventService {
                     start: item[startField],
                     end: item[endField],
                     entityId: item[`${entityField}Id`],
+                    isAllDay: allDayField ? item[allDayField.InternalName] : undefined,
                 };
 
                 return event;

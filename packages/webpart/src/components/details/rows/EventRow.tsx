@@ -1,6 +1,5 @@
 import * as React from "react";
 import { EntityDetailsRow } from "@/contexts/EntityLayoutsContext";
-import { useSP } from "@/hooks/useSP";
 import { Entity } from "@business-governance/api";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -16,21 +15,11 @@ type Props = {
 
 export const EventRow = (props: Props) => {
     const { row, entity } = props;
-    const { sp } = useSP();
     const bg = useBusinessGovernance();
 
     const { data: event } = useQuery({
         queryKey: ["events", entity.id],
         queryFn: async () => {
-            const timeZoneInfo = await sp.web.regionalSettings.timeZone();
-
-            const offset =
-                -(
-                    timeZoneInfo.Information.Bias +
-                    timeZoneInfo.Information.StandardBias +
-                    timeZoneInfo.Information.DaylightBias
-                ) / 60.0;
-
             const events = await bg.entityEventService.getEntityEvents(entity.id);
 
             if (!events || events.length === 0) {
@@ -40,12 +29,31 @@ export const EventRow = (props: Props) => {
             const event = events[0];
 
             const format = "DD-MM-YYYY HH:mm";
-            const startDate = event.start
-                ? dayjs(event.start).utc(true).utcOffset(offset).format(format)
-                : "";
-            const endDate = event.end
-                ? dayjs(event.end).utc(true).utcOffset(offset).format(format)
-                : "";
+            let startDate = event.start ? dayjs(event.start).format(format) : "";
+            let endDate = event.end ? dayjs(event.end).format(format) : "";
+
+            if (event.isAllDay) {
+                const start = new Date(event.start);
+                const end = new Date(event.end);
+
+                const options = {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    timeZone: "UTC",
+                } as any;
+                const format = new Intl.DateTimeFormat("en-US", options);
+
+                const isOneDay = new Date(start).setDate(start.getDate() + 1) === end.getTime();
+                if (isOneDay) {
+                    startDate = format.format(start);
+                    endDate = "All day";
+                } else {
+                    startDate = format.format(start);
+                    // NOTE: on all day events the end date is exclusive
+                    endDate = format.format(new Date(end).setDate(end.getDate() - 1));
+                }
+            }
 
             return {
                 title: event.title,
