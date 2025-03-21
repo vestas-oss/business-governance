@@ -2,6 +2,8 @@ import type { SPFI } from "@pnp/sp";
 import type { Configuration } from "./Configuration.js";
 import "@pnp/sp/webs/index.js";
 import "@pnp/sp/lists/index.js";
+import type { IListInfo } from "@pnp/sp/lists/index.js";
+import type { IFieldInfo } from "@pnp/sp/fields/types.js";
 
 export class ConfigurationService {
     constructor(private readonly sp: SPFI, private configurationPreset?: Configuration) {
@@ -12,7 +14,7 @@ export class ConfigurationService {
         // Generic or Events and not Hidden
         const listInfos = await this.sp.web.lists.filter(
             "(BaseTemplate eq 100 or BaseTemplate eq 106) and Hidden eq false"
-        )();
+        ).select("Title", "ItemCount")() as Array<Pick<IListInfo, "Title" | "ItemCount">>;
 
         const getEntityList = async () => {
             const title = this.configurationPreset?.entityListTitle;
@@ -78,10 +80,10 @@ export class ConfigurationService {
                 // Guess parent column
                 try {
                     const list = this.sp.web.lists.getByTitle(configuration.entityListTitle);
-                    const listInfo = await list();
+                    const listInfo = await list.select("Id")() as Pick<IListInfo, "Id">;
                     const lookupFields = await list.fields.filter(
                         `TypeAsString eq 'Lookup' and (LookupList eq '${listInfo.Id}' or LookupList eq '{${listInfo.Id}}')`
-                    )();
+                    ).select("InternalName")() as Array<Pick<IFieldInfo, "InternalName">>;
 
                     if (lookupFields?.length > 0) {
                         const name = lookupFields[0].InternalName;

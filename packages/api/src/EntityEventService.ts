@@ -3,7 +3,8 @@ import { ConfigurationService } from "./ConfigurationService.js";
 import { type Configuration } from "./Configuration.js";
 import "@pnp/sp/items/index.js";
 import "@pnp/sp/fields/index.js";
-import { Event } from "./types/Event.js";
+import type { Event } from "./types/Event.js";
+import type { IFieldInfo } from "@pnp/sp/fields/index.js";
 
 export class EntityEventService {
     private readonly configurationService: ConfigurationService;
@@ -33,7 +34,7 @@ export class EntityEventService {
         try {
             const list = this.sp.web.lists.getByTitle(configuration.entityEventsList);
 
-            const fields = await list.fields.select("InternalName")();
+            const fields = await list.fields.select("InternalName")() as Array<Pick<IFieldInfo, "InternalName">>;
 
             const entityFieldInfo = fields.find(f => f.InternalName === "EntityName" || f.InternalName === "Entity");
             const entityField = entityFieldInfo?.InternalName || "Entity";
