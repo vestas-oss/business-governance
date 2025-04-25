@@ -70,12 +70,10 @@ export class EntityUserService {
                 userField,
                 "Role",
             ];
-            const order = `${userField}/Title`;
 
             const items = list.items.
                 expand(...expands).
-                select(...selects).
-                orderBy(order);
+                select(...selects);
 
             const getAll = async (items: IItems) => {
                 let array = new Array();
@@ -93,6 +91,14 @@ export class EntityUserService {
                 userItems = await getAll(items.
                     filter(`${entityField}/Id eq ${entityId}`));
             }
+
+            try {
+                // NOTE: items.orderBy gives inconsistent results with async paging, hence this sort:
+                userItems.sort((a, b) => a[userField]?.Title.localeCompare(b[userField]?.Title));
+            } catch {
+                // Ignore
+            }
+
             const users = userItems.map(m => new EntityUser(m));
 
             return users;
